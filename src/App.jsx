@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { db } from "./firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const SEED_CUSTOMERS = [
   { id: 1, name: "রহিম উদ্দিন", phone: "01711-223344", due: 850, history: [
@@ -22,7 +24,9 @@ function initials(name) {
 }
 
 export default function KhataApp() {
-  const [customers, setCustomers] = useState(SEED_CUSTOMERS);
+  console.log(db);
+
+  const [customers, setCustomers] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [screen, setScreen] = useState("list"); // list | detail | add | notif
   const [amount, setAmount] = useState("");
@@ -30,6 +34,21 @@ export default function KhataApp() {
   const [lastTxn, setLastTxn] = useState(null);
   const [search, setSearch] = useState("");
   const [notifChannels, setNotifChannels] = useState({ app: true, sms: true });
+  useEffect(() => {
+  const loadCustomers = async () => {
+    const querySnapshot = await getDocs(collection(db, "customers"));
+
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      history: doc.data().history || [],
+    }));
+
+    setCustomers(data);
+  };
+
+  loadCustomers();
+}, []);
 
   const selected = customers.find(c => c.id === selectedId);
   const totalDue = customers.reduce((s, c) => s + c.due, 0);
