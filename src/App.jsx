@@ -30,7 +30,7 @@ function App() {
   element={<Settings />}
 />
 <Route
-  path="/staff"
+  path="/staff-management"
   element={<StaffManagement />}
 />
         <Route path="*" element={<NotFound />} />
