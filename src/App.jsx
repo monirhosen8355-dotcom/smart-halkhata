@@ -5,6 +5,9 @@ import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
 import CustomerDetails from "./pages/CustomerDetails";
 import NotFound from "./pages/NotFound";
+import StaffManagement from "./pages/StaffManagement";
+import ShopProfile from "./pages/ShopProfile";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -16,6 +19,19 @@ function App() {
         <Route
   path="/customer/:id"
   element={<CustomerDetails />}
+/>
+<Route
+  path="/shop-profile"
+  element={<ShopProfile />}
+/>
+
+<Route
+  path="/settings"
+  element={<Settings />}
+/>
+<Route
+  path="/staff"
+  element={<StaffManagement />}
 />
         <Route path="*" element={<NotFound />} />
       </Routes>

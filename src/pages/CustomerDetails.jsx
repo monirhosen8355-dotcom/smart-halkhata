@@ -14,6 +14,9 @@ import {
   serverTimestamp,
 deleteDoc,
 } from "firebase/firestore";
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import { logActivity } from "../utils/logActivity";
 
 const generateTransactionId = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -60,8 +63,13 @@ function CustomerDetails() {
   const [amount, setAmount] = useState("");
   const [payment, setPayment] = useState("");
   const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] =
-  useState(null);
+const [selectedTransaction, setSelectedTransaction] = useState(null);
+const [isEditingTransaction, setIsEditingTransaction] = useState(false);
+const [editAmount, setEditAmount] = useState("");
+const [isEditingCustomer, setIsEditingCustomer] = useState(false);
+const [editName, setEditName] = useState("");
+const [editPhone, setEditPhone] = useState("");
+
 
   useEffect(() => {
     if (user) {
@@ -161,14 +169,34 @@ function CustomerDetails() {
   // =====================
   // Receive Payment
   // =====================
-  const handlePayment = async () => {
-    if (!payment || Number(payment) <= 0) return;
-    if (Number(payment) > Number(customer.due)) {
-  alert("Payment cannot be greater than due amount.");
-  return;
-}
-const deleteAllTransactions = async () => {
-  if (!window.confirm("Delete all transactions?")) return;
+  const handleUpdateCustomer = async () => {
+  if (!editName.trim() || !editPhone.trim()) return;
+
+  const customerRef = doc(
+    db,
+    "shops",
+    user.uid,
+    "customers",
+    id
+  );
+
+  await updateDoc(customerRef, {
+    name: editName.trim(),
+    phone: editPhone.trim(),
+  });
+
+  await logActivity(user.uid, {
+    action: "Edit Customer",
+    customerName: editName.trim(),
+    customerId: id,
+  });
+
+  setIsEditingCustomer(false);
+
+  await loadCustomer();
+};
+  const handleDeleteAllTransactions = async () => {
+  if (!window.confirm("Delete all transactions? This cannot be undone.")) return;
 
   const snapshot = await getDocs(
     collection(
@@ -185,10 +213,221 @@ const deleteAllTransactions = async () => {
     await deleteDoc(item.ref);
   }
 
+  const customerRef = doc(
+    db,
+    "shops",
+    user.uid,
+    "customers",
+    id
+  );
+
+  await updateDoc(customerRef, {
+    due: 0,
+  });
+await logActivity(user.uid, {
+  action: "Delete All Transactions",
+  customerName: customer.name,
+  customerId: id,
+});
+  await loadCustomer();
   await loadTransactions();
 
-  alert("All Transactions Deleted");
+  alert("All transactions deleted");
 };
+
+const handleDeleteTransaction = async (transaction) => {
+  if (!window.confirm("Delete this transaction?")) return;
+
+  const delta =
+    transaction.type === "due"
+      ? -transaction.amount
+      : transaction.amount;
+
+  const customerRef = doc(
+    db,
+    "shops",
+    user.uid,
+    "customers",
+    id
+  );
+
+  await updateDoc(customerRef, {
+    due: Number(customer.due) + delta,
+  });
+
+  await deleteDoc(
+    doc(
+      db,
+      "shops",
+      user.uid,
+      "customers",
+      id,
+      "transactions",
+      transaction.id
+    )
+  );
+  await logActivity(user.uid, {
+  action: "Delete Transaction",
+  customerName: customer.name,
+  customerId: id,
+  amount: transaction.amount,
+});
+  setSelectedTransaction(null);
+
+  await loadCustomer();
+  await loadTransactions();
+};
+
+const handleEditTransaction = async (
+  transaction,
+  newAmount
+) => {
+  const amt = Number(newAmount);
+
+  if (!amt || amt <= 0) return;
+
+  const oldDelta =
+    transaction.type === "due"
+      ? transaction.amount
+      : -transaction.amount;
+
+  const newDelta =
+    transaction.type === "due"
+      ? amt
+      : -amt;
+
+  const dueAfterEdit =
+    Number(customer.due) - oldDelta + newDelta;
+
+  const customerRef = doc(
+    db,
+    "shops",
+    user.uid,
+    "customers",
+    id
+  );
+
+  await updateDoc(customerRef, {
+    due: dueAfterEdit,
+  });
+
+  const txnRef = doc(
+    db,
+    "shops",
+    user.uid,
+    "customers",
+    id,
+    "transactions",
+    transaction.id
+  );
+
+  await updateDoc(txnRef, {
+  amount: amt,
+  balance: dueAfterEdit,
+  editedAt: serverTimestamp(),
+});
+
+await logActivity(user.uid, {
+  action: "Edit Transaction",
+  customerName: customer.name,
+  customerId: id,
+  amount: amt,
+});
+
+setSelectedTransaction(null);
+
+await loadCustomer();
+await loadTransactions();
+};
+const handleDownloadPDF = (transaction) => {
+  const info = formatDateTime(transaction.createdAt);
+
+  const receipt = new jsPDF();
+
+  receipt.setFontSize(16);
+  receipt.text("Payment Receipt", 20, 20);
+
+  receipt.setFontSize(12);
+  receipt.text(`Customer: ${customer.name}`, 20, 35);
+  receipt.text(`Phone: ${customer.phone}`, 20, 43);
+
+  receipt.text(
+    `Type: ${
+      transaction.type === "payment"
+        ? "Payment Received"
+        : "Due Added"
+    }`,
+    20,
+    51
+  );
+
+  receipt.text(
+    `Amount: Tk ${transaction.amount}`,
+    20,
+    59
+  );
+
+  receipt.text(
+    `Transaction ID: ${transaction.transactionId}`,
+    20,
+    67
+  );
+
+  receipt.text(
+    `Date: ${info?.date || ""}`,
+    20,
+    75
+  );
+
+  receipt.text(
+    `Time: ${info?.time || ""}`,
+    20,
+    83
+  );
+
+  receipt.save(
+    `receipt-${transaction.transactionId}.pdf`
+  );
+};
+const handleExportExcel = () => {
+  const rows = transactions.map((transaction) => {
+    const info = formatDateTime(transaction.createdAt);
+
+    return {
+      "Transaction ID": transaction.transactionId,
+      Type:
+        transaction.type === "payment"
+          ? "Payment Received"
+          : "Due Added",
+      Amount: transaction.amount,
+      Balance: transaction.balance,
+      Status: transaction.status,
+      Date: info?.date || "",
+      Time: info?.time || "",
+    };
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Transactions"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    `${customer.name}-transactions.xlsx`
+  );
+};
+  const handlePayment = async () => {
+    if (!payment || Number(payment) <= 0) return;
+    if (Number(payment) > Number(customer.due)) {
+  alert("Payment cannot be greater than due amount.");
+  return;
+}
     const customerRef = doc(
       db,
       "shops",
@@ -219,6 +458,12 @@ const deleteAllTransactions = async () => {
   createdAt: serverTimestamp(),
 }
     );
+    await logActivity(user.uid, {
+  action: "Receive Payment",
+  customerName: customer.name,
+  customerId: id,
+  amount: Number(payment),
+});
 
     setPayment("");
 
@@ -230,11 +475,51 @@ const deleteAllTransactions = async () => {
 
   return (
     <div style={{ padding: "30px" }}>
-      <h1>{customer.name}</h1>
+      {isEditingCustomer ? (
+  <>
+    <input
+      type="text"
+      value={editName}
+      onChange={(e) => setEditName(e.target.value)}
+      placeholder="Customer Name"
+    />
 
-      <p>{customer.phone}</p>
+    <br />
+    <br />
 
-      <h2>Due: ৳{customer.due}</h2>
+    <input
+      type="text"
+      value={editPhone}
+      onChange={(e) => setEditPhone(e.target.value)}
+      placeholder="Phone Number"
+    />
+
+    <br />
+    <br />
+
+    <button onClick={handleUpdateCustomer}>
+      Save Customer
+    </button>
+  </>
+) : (
+  <>
+    <h1>{customer.name}</h1>
+
+    <p>{customer.phone}</p>
+
+    <button
+      onClick={() => {
+        setEditName(customer.name);
+        setEditPhone(customer.phone);
+        setIsEditingCustomer(true);
+      }}
+    >
+      Edit Customer
+    </button>
+  </>
+)}
+
+<h2>Due: ৳{customer.due}</h2>
 
       <hr />
 
@@ -267,7 +552,48 @@ const deleteAllTransactions = async () => {
 
       <hr />
 
-      <h2>Transaction History</h2>
+      <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <h2>Transaction History</h2>
+
+  <div>
+    <button
+      onClick={handleExportExcel}
+      style={{ marginRight: "10px" }}
+    >
+      Export Excel
+    </button>
+
+    
+  </div>
+</div>
+
+  <button
+    onClick={handleDeleteAllTransactions}
+    style={{
+      background: "#DC2626",
+      color: "#fff",
+      border: "none",
+      padding: "8px 14px",
+      borderRadius: "8px",
+      cursor: "pointer",
+    }}
+  >
+    Delete All
+  </button>
+</div>
 
       {transactions.map((transaction) => {
   const dateInfo = formatDateTime(
@@ -278,7 +604,11 @@ const deleteAllTransactions = async () => {
         
         <div
   key={transaction.id}
-  onClick={() => setSelectedTransaction(transaction)}
+  onClick={() => {
+  setSelectedTransaction(transaction);
+  setIsEditingTransaction(false);
+  setEditAmount(transaction.amount);
+}}
   style={{
     display: "flex",
     justifyContent: "space-between",
@@ -546,6 +876,94 @@ const deleteAllTransactions = async () => {
   </p>
 </div>
 
+{isEditingTransaction ? (
+  <>
+    <input
+      type="number"
+      value={editAmount}
+      onChange={(e) => setEditAmount(e.target.value)}
+      style={{
+        width: "100%",
+        padding: "10px",
+        marginTop: "15px",
+        borderRadius: "8px",
+      }}
+    />
+
+    <button
+      onClick={() =>
+        handleEditTransaction(selectedTransaction, editAmount)
+      }
+      style={{
+        marginTop: "15px",
+        width: "100%",
+        padding: "12px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#22C55E",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Save Changes
+    </button>
+  </>
+) : (
+  <div
+    style={{
+      display: "flex",
+      gap: "10px",
+      marginTop: "15px",
+    }}
+  >
+    <button
+      onClick={() => setIsEditingTransaction(true)}
+      style={{
+        flex: 1,
+        padding: "12px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#2563EB",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() =>
+        handleDeleteTransaction(selectedTransaction)
+      }
+      style={{
+        flex: 1,
+        padding: "12px",
+        border: "none",
+        borderRadius: "10px",
+        background: "#DC2626",
+        color: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      Delete
+    </button>
+  </div>
+)}
+<button
+  onClick={() => handleDownloadPDF(selectedTransaction)}
+  style={{
+    marginTop: "12px",
+    width: "100%",
+    padding: "12px",
+    border: "none",
+    borderRadius: "10px",
+    background: "#059669",
+    color: "#fff",
+    cursor: "pointer",
+  }}
+>
+  Download PDF Receipt
+</button>
       <button
         onClick={() => setSelectedTransaction(null)}
         style={{
