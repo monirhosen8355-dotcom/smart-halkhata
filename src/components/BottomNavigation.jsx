@@ -5,6 +5,7 @@ import {
   FiUsers,
   FiBarChart2,
   FiSettings,
+  FiPlus,
 } from "react-icons/fi";
 
 function BottomNavigation() {
@@ -13,32 +14,42 @@ function BottomNavigation() {
 
   const [pressed, setPressed] = useState(null);
 
-  const items = [
-    {
-      key: "home",
-      title: "Home",
-      icon: <FiHome />,
-      path: "/dashboard",
-    },
-    {
-      key: "customers",
-      title: "Customers",
-      icon: <FiUsers />,
-      path: "/customers",
-    },
-   {
-  key: "reports",
-  title: "Reports",
-  icon: <FiBarChart2 />,
-  path: "/business-overview",
-},
-    {
-      key: "settings",
-      title: "Settings",
-      icon: <FiSettings />,
-      path: "/settings",
-    },
-  ];
+ const items = [
+  {
+    key: "home",
+    title: "Home",
+    icon: <FiHome />,
+    path: "/dashboard",
+  },
+  {
+    key: "customers",
+    title: "Customers",
+    icon: <FiUsers />,
+    path: "/customers",
+  },
+
+  {
+    key: "add",
+    title: "",
+    icon: <FiPlus />,
+    path: "#",
+    fab: true,
+  },
+
+  {
+    key: "reports",
+    title: "Reports",
+    icon: <FiBarChart2 />,
+    path: "/business-overview",
+  },
+
+  {
+    key: "settings",
+    title: "Settings",
+    icon: <FiSettings />,
+    path: "/settings",
+  },
+];
 
   return (
     <>
@@ -104,6 +115,28 @@ function BottomNavigation() {
       .bn-active .bn-title{
         color:#2563EB;
       }
+        .bn-fab{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  background:#2563EB;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-top:-35px;
+  box-shadow:0 10px 25px rgba(37,99,235,.35);
+}
+
+.bn-fab .bn-icon{
+  color:#fff !important;
+  font-size:30px;
+}
+
+.bn-fab-title{
+  height:12px;
+}
 
       .bn-dot{
         width:6px;
@@ -119,14 +152,28 @@ function BottomNavigation() {
 
           {items.map((item)=>{
 
-            const active=location.pathname===item.path;
+            const active =
+  item.path !== "#" &&
+  location.pathname === item.path;
 
             return(
               <div
-                key={item.key}
-                className={`bn-item ${active?"bn-active":""} ${pressed===item.key?"pressed":""}`}
+  key={item.key}
+               className={`
+  bn-item
+  ${item.fab ? "bn-fab" : ""}
+  ${active ? "bn-active" : ""}
+  ${pressed === item.key ? "pressed" : ""}
+`}
 
-                onClick={()=>navigate(item.path)}
+                onClick={() => {
+  if (item.fab) {
+    alert("Coming Soon");
+    return;
+  }
+
+  navigate(item.path);
+}}
 
                 onMouseDown={()=>setPressed(item.key)}
                 onMouseUp={()=>setPressed(null)}
@@ -142,9 +189,11 @@ function BottomNavigation() {
                   {item.icon}
                 </div>
 
-                <div className="bn-title">
-                  {item.title}
-                </div>
+                {!item.fab && (
+  <div className="bn-title">
+    {item.title}
+  </div>
+)}
 
               </div>
             );

@@ -1,7 +1,13 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
@@ -18,6 +24,9 @@ function Dashboard() {
   const { user, loading, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [pressedKey, setPressedKey] = useState(null);
+
+const [totalCustomers, setTotalCustomers] = useState(0);
+const [totalDue, setTotalDue] = useState(0);
 
   useEffect(() => {
   if (!user) return;
@@ -38,7 +47,23 @@ function Dashboard() {
   };
 
   createShop();
+loadDashboardStats();
 }, [user]);
+
+const loadDashboardStats = async () => {
+  const snap = await getDocs(
+    collection(db, "shops", user.uid, "customers")
+  );
+
+  let due = 0;
+
+  snap.forEach((doc) => {
+    due += Number(doc.data().due || 0);
+  });
+
+  setTotalCustomers(snap.size);
+  setTotalDue(due);
+};
 
   if (loading) {
     return <h2 style={{ padding: "30px", fontFamily: "system-ui" }}>Loading...</h2>;
@@ -185,7 +210,64 @@ function Dashboard() {
       </div>
 
       <div className="hd-body">
-        <p className="hd-welcome">Welcome back 👋 — quick access to everything below</p>
+        <p className="hd-welcome">
+  Welcome back 👋 — quick access to everything below
+</p>
+
+<div
+  style={{
+    background: "#fff",
+    borderRadius: "16px",
+    padding: "18px",
+    marginBottom: "18px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+  }}
+>
+  <div>
+    <div
+      style={{
+        fontSize: "13px",
+        color: "#6B7280",
+      }}
+    >
+      Total Due
+    </div>
+
+    <div
+      style={{
+        fontSize: "28px",
+        fontWeight: "800",
+        color: "#DC2626",
+      }}
+    >
+      ৳{totalDue.toLocaleString()}
+    </div>
+  </div>
+
+  <div style={{ textAlign: "right" }}>
+    <div
+      style={{
+        fontSize: "13px",
+        color: "#6B7280",
+      }}
+    >
+      Customers
+    </div>
+
+    <div
+      style={{
+        fontSize: "28px",
+        fontWeight: "800",
+        color: "#16A34A",
+      }}
+    >
+      {totalCustomers}
+    </div>
+  </div>
+</div>
 
         <div className="hd-grid">
           {NAV_CARDS.map((card) => (
@@ -219,7 +301,7 @@ function Dashboard() {
         </div>
            </div>
 
-      <BottomNavigation />
+<BottomNavigation />
     </div>
   );
 }

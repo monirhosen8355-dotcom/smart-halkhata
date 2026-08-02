@@ -8,11 +8,34 @@ function Settings() {
   const { user } = useContext(AuthContext);
 
   const [settings, setSettings] = useState({
-    darkMode: false,
-    currency: "Tk",
-    dateFormat: "DD-MM-YYYY",
-    timeFormat: "12h",
-  });
+  // Appearance
+  darkMode: false,
+
+  // Shop Information
+  shopName: "",
+  ownerName: "",
+  phone: "",
+  address: "",
+
+  // Receipt
+  showLogo: true,
+  showPhone: true,
+  showAddress: true,
+  receiptFooter: "Thank you. Visit Again.",
+
+  // Notification
+  dueNotification: true,
+  paymentNotification: true,
+  soundNotification: true,
+
+  // Language
+  language: "English",
+
+  // Regional
+  currency: "Tk",
+  dateFormat: "DD-MM-YYYY",
+  timeFormat: "12h",
+});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -26,11 +49,28 @@ function Settings() {
     if (snap.exists()) {
       const data = snap.data();
       setSettings({
-        darkMode: data.darkMode ?? false,
-        currency: data.currency || "Tk",
-        dateFormat: data.dateFormat || "DD-MM-YYYY",
-        timeFormat: data.timeFormat || "12h",
-      });
+  darkMode: data.darkMode ?? false,
+
+  shopName: data.shopName || "",
+  ownerName: data.ownerName || "",
+  phone: data.phone || "",
+  address: data.address || "",
+
+  showLogo: data.showLogo ?? true,
+  showPhone: data.showPhone ?? true,
+  showAddress: data.showAddress ?? true,
+  receiptFooter: data.receiptFooter || "Thank you. Visit Again.",
+
+  dueNotification: data.dueNotification ?? true,
+  paymentNotification: data.paymentNotification ?? true,
+  soundNotification: data.soundNotification ?? true,
+
+  language: data.language || "English",
+
+  currency: data.currency || "Tk",
+  dateFormat: data.dateFormat || "DD-MM-YYYY",
+  timeFormat: data.timeFormat || "12h",
+});
     }
   };
 
@@ -151,7 +191,172 @@ function Settings() {
               />
             </div>
           </div>
+                {/* Shop Information */}
+<div style={sectionHeading}>Shop Information</div>
 
+<div style={sectionRow}>
+  {labelBlock("Shop Name", "Your business name")}
+  <input
+    value={settings.shopName}
+    onChange={(e) =>
+      setSettings({ ...settings, shopName: e.target.value })
+    }
+    className="cd-input"
+    style={{ ...selectStyle, maxWidth: "220px" }}
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Owner Name", "Shop owner's full name")}
+  <input
+    value={settings.ownerName}
+    onChange={(e) =>
+      setSettings({ ...settings, ownerName: e.target.value })
+    }
+    className="cd-input"
+    style={{ ...selectStyle, maxWidth: "220px" }}
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Phone Number", "Business contact number")}
+  <input
+    value={settings.phone}
+    onChange={(e) =>
+      setSettings({ ...settings, phone: e.target.value })
+    }
+    className="cd-input"
+    style={{ ...selectStyle, maxWidth: "220px" }}
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Shop Address", "Business address")}
+  <input
+    value={settings.address}
+    onChange={(e) =>
+      setSettings({ ...settings, address: e.target.value })
+    }
+    className="cd-input"
+    style={{ ...selectStyle, maxWidth: "220px" }}
+  />
+</div>
+
+{/* Receipt Settings */}
+<div style={sectionHeading}>Receipt Settings</div>
+
+<div style={sectionRow}>
+  {labelBlock("Show Shop Logo", "Display logo on receipt")}
+  <input
+    type="checkbox"
+    checked={settings.showLogo}
+    onChange={(e) =>
+      setSettings({ ...settings, showLogo: e.target.checked })
+    }
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Show Phone", "Display phone on receipt")}
+  <input
+    type="checkbox"
+    checked={settings.showPhone}
+    onChange={(e) =>
+      setSettings({ ...settings, showPhone: e.target.checked })
+    }
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Show Address", "Display address on receipt")}
+  <input
+    type="checkbox"
+    checked={settings.showAddress}
+    onChange={(e) =>
+      setSettings({ ...settings, showAddress: e.target.checked })
+    }
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Receipt Footer", "Message shown below receipt")}
+  <input
+    value={settings.receiptFooter}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        receiptFooter: e.target.value,
+      })
+    }
+    className="cd-input"
+    style={{ ...selectStyle, maxWidth: "260px" }}
+  />
+</div>
+
+{/* Notification */}
+<div style={sectionHeading}>Notifications</div>
+
+<div style={sectionRow}>
+  {labelBlock("Due Notification", "Notify when due is added")}
+  <input
+    type="checkbox"
+    checked={settings.dueNotification}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        dueNotification: e.target.checked,
+      })
+    }
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Payment Notification", "Notify when payment received")}
+  <input
+    type="checkbox"
+    checked={settings.paymentNotification}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        paymentNotification: e.target.checked,
+      })
+    }
+  />
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Notification Sound", "Play sound")}
+  <input
+    type="checkbox"
+    checked={settings.soundNotification}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        soundNotification: e.target.checked,
+      })
+    }
+  />
+</div>
+
+{/* Language */}
+<div style={sectionHeading}>Language</div>
+
+<div style={sectionRow}>
+  {labelBlock("Language", "Application language")}
+  <select
+    value={settings.language}
+    onChange={(e) =>
+      setSettings({
+        ...settings,
+        language: e.target.value,
+      })
+    }
+    style={{ ...selectStyle, maxWidth: "180px" }}
+  >
+    <option>English</option>
+    <option>বাংলা</option>
+  </select>
+</div>
           {/* Regional Settings section */}
           <div style={sectionHeading}>Regional Settings</div>
 
@@ -192,7 +397,62 @@ function Settings() {
             </select>
           </div>
         </div>
+    {/* Security */}
+<div style={sectionHeading}>Security</div>
 
+<div style={sectionRow}>
+  {labelBlock("Change Password", "Update your account password")}
+  <button
+    style={{
+      padding: "10px 18px",
+      border: "none",
+      borderRadius: "10px",
+      background: "#2563EB",
+      color: "#fff",
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+    onClick={() => alert("Coming Soon")}
+  >
+    Change
+  </button>
+</div>
+
+{/* About */}
+<div style={sectionHeading}>About</div>
+
+<div style={sectionRow}>
+  {labelBlock("App Version", "Current installed version")}
+  <strong>v1.0.0</strong>
+</div>
+
+<div style={sectionRow}>
+  {labelBlock("Privacy Policy", "Read our privacy policy")}
+  <button
+    style={{
+      padding: "8px 14px",
+      borderRadius: "8px",
+      border: "1px solid #E5E7EB",
+      cursor: "pointer",
+    }}
+  >
+    Open
+  </button>
+</div>
+
+<div style={{ ...sectionRow, borderBottom: "none" }}>
+  {labelBlock("Terms & Conditions", "Application terms")}
+  <button
+    style={{
+      padding: "8px 14px",
+      borderRadius: "8px",
+      border: "1px solid #E5E7EB",
+      cursor: "pointer",
+    }}
+  >
+    Open
+  </button>
+</div>
         {/* Save */}
         <button
           onClick={handleSave}

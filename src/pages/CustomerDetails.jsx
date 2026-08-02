@@ -58,6 +58,10 @@ function CustomerDetails() {
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [paymentNote, setPaymentNote] = useState("");
   const [transactions, setTransactions] = useState([]);
+const [searchTransaction, setSearchTransaction] = useState("");
+const [transactionFilter, setTransactionFilter] = useState("all");
+const [dateFilter, setDateFilter] = useState("all");
+const [sortBy, setSortBy] = useState("newest");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isImporting, setIsImporting] = useState(false);
   const [isEditingTransaction, setIsEditingTransaction] = useState(false);
@@ -577,6 +581,22 @@ createdDate: new Date().toISOString().split("T")[0],
                   <span className={`cd-due-badge ${hasDue ? "due" : "paid"}`}>
                     {hasDue ? `Due ৳${customer.due}` : "Fully Paid"}
                   </span>
+                  <div
+  style={{
+    display: "flex",
+    gap: "8px",
+    marginTop: "10px",
+    flexWrap: "wrap",
+  }}
+>
+  <span className="cd-mini-badge method">
+    📄 {transactions.length} TRX
+  </span>
+
+  <span className="cd-mini-badge status">
+    💰 ৳{transactions.reduce((sum, t) => sum + Number(t.amount || 0), 0)}
+  </span>
+</div>
                 </>
               )}
             </div>
@@ -585,7 +605,7 @@ createdDate: new Date().toISOString().split("T")[0],
 
         <div className="cd-action-grid">
           <div className="cd-card">
-            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>➕ Add Due</div>
+            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>➕ Unpaid Balance</div>
             <div className="cd-field-stack">
               <div>
                 <label className="cd-field-label">Amount</label>
@@ -596,7 +616,7 @@ createdDate: new Date().toISOString().split("T")[0],
                 <input placeholder="e.g. Rice 25kg, Cement" value={dueNote} onChange={(e) => setDueNote(e.target.value)} className="cd-input" />
               </div>
             </div>
-            <button onClick={handleAddDue} className="cd-btn" style={{ background: "#DC2626" }}>Add Due</button>
+            <button onClick={handleAddDue} className="cd-btn" style={{ background: "#DC2626" }}>Unpaid Balance</button>
           </div>
 
           <div className="cd-card">
@@ -608,9 +628,32 @@ createdDate: new Date().toISOString().split("T")[0],
               </div>
               <div>
                 <label className="cd-field-label">Payment Method</label>
-                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} className="cd-input cd-select">
-                  {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <select
+  value={paymentMethod}
+  onChange={(e) => setPaymentMethod(e.target.value)}
+  className="cd-input"
+  style={{
+    background: "#FFFFFF",
+    color: "#111827",
+    border: "1px solid #D1D5DB",
+    height: "48px",
+    appearance: "auto",
+    WebkitAppearance: "menulist",
+  }}
+>
+  {PAYMENT_METHODS.map((m) => (
+    <option
+      key={m}
+      value={m}
+      style={{
+        background: "#FFFFFF",
+        color: "#111827",
+      }}
+    >
+      {m}
+    </option>
+  ))}
+</select>
               </div>
               <div>
                 <label className="cd-field-label">Note (optional)</label>
@@ -633,16 +676,159 @@ createdDate: new Date().toISOString().split("T")[0],
             <button onClick={handleDeleteAllTransactions} className="cd-btn small danger-outline">🗑 Delete All</button>
           </div>
         </div>
-
         <div style={{ fontSize: "12.5px", fontWeight: 700, color: "#6B7280", margin: "4px 0 10px" }}>
-          Transaction History
+          <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "15px",
+    gap: "10px",
+    flexWrap: "wrap",
+  }}
+>
+  <h3 style={{ margin: 0 }}>Transaction History</h3>
+
+  <input
+    type="text"
+    placeholder="Search Transaction ID, Note, Amount..."
+    value={searchTransaction}
+    onChange={(e) => setSearchTransaction(e.target.value)}
+    className="cd-input"
+    style={{
+      width: "260px",
+      maxWidth: "100%",
+    }}
+  />
+</div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "8px",
+    marginBottom: "15px",
+    flexWrap: "wrap",
+  }}
+>
+  <button
+    onClick={() => setTransactionFilter("all")}
+    className="cd-btn small"
+    style={{
+      background:
+        transactionFilter === "all" ? "#2563EB" : "#E5E7EB",
+      color:
+        transactionFilter === "all" ? "#fff" : "#111827",
+    }}
+  >
+    All
+  </button>
+
+  <button
+    onClick={() => setTransactionFilter("payment")}
+    className="cd-btn small"
+    style={{
+      background:
+        transactionFilter === "payment" ? "#16A34A" : "#E5E7EB",
+      color:
+        transactionFilter === "payment" ? "#fff" : "#111827",
+    }}
+  >
+    Payment
+  </button>
+
+  <button
+    onClick={() => setTransactionFilter("due")}
+    className="cd-btn small"
+    style={{
+      background:
+        transactionFilter === "due" ? "#DC2626" : "#E5E7EB",
+      color:
+        transactionFilter === "due" ? "#fff" : "#111827",
+    }}
+  >
+    Due
+  </button>
+</div>
         </div>
 
-        {transactions.length === 0 ? (
+<select
+  value={dateFilter}
+  onChange={(e) => setDateFilter(e.target.value)}
+  className="cd-input"
+  style={{
+    marginBottom: "15px",
+    maxWidth: "220px",
+  }}
+>
+  <option value="all">📅 All Dates</option>
+  <option value="today">Today</option>
+  <option value="7days">Last 7 Days</option>
+  <option value="30days">Last 30 Days</option>
+</select>
+
+{transactions.length === 0 ? (
           <div className="cd-card cd-empty">No transactions yet.</div>
         ) : (
           <div className="cd-txn-list">
-            {transactions.map((transaction) => {
+            {transactions
+  .filter((transaction) => {
+    const keyword = searchTransaction.trim().toLowerCase();
+
+const matchSearch =
+  keyword === "" ||
+  transaction.transactionId?.toLowerCase().includes(keyword) ||
+  transaction.note?.toLowerCase().includes(keyword) ||
+  transaction.paymentMethod?.toLowerCase().includes(keyword) ||
+  String(transaction.amount).includes(keyword);
+
+const matchFilter =
+  transactionFilter === "all" ||
+  transaction.type === transactionFilter;
+
+let matchDate = true;
+
+if (dateFilter !== "all" && transaction.createdAt) {
+  const txDate = transaction.createdAt.toDate();
+  const now = new Date();
+
+  if (dateFilter === "today") {
+    matchDate =
+      txDate.toDateString() === now.toDateString();
+  }
+
+  if (dateFilter === "7days") {
+    matchDate =
+      now - txDate <= 7 * 24 * 60 * 60 * 1000;
+  }
+
+  if (dateFilter === "30days") {
+    matchDate =
+      now - txDate <= 30 * 24 * 60 * 60 * 1000;
+  }
+}
+
+return matchSearch && matchFilter && matchDate;
+  })
+  .sort((a, b) => {
+  if (sortBy === "newest") {
+    return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+  }
+
+  if (sortBy === "oldest") {
+    return (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0);
+  }
+
+  if (sortBy === "high") {
+    return Number(b.amount) - Number(a.amount);
+  }
+
+  if (sortBy === "low") {
+    return Number(a.amount) - Number(b.amount);
+  }
+
+  return 0;
+})
+.map((transaction) => {
               const dateInfo = formatDateTime(transaction.createdAt);
               const isPayment = transaction.type === "payment";
 
@@ -650,7 +836,7 @@ createdDate: new Date().toISOString().split("T")[0],
                 <div key={transaction.id} className="cd-txn-card" onClick={() => setSelectedTransaction(transaction)}>
                   <div className="cd-txn-top">
                     <div>
-                      <div className="cd-txn-type">{isPayment ? "💰 Payment Received" : "➕ Due Added"}</div>
+                      <div className="cd-txn-type">{isPayment ? "💰 Payment Received" : "➕  Unpaid Balance"}</div>
                       <div className="cd-txn-datetime">{dateInfo?.date} • {dateInfo?.time?.slice(0, 5)}</div>
                     </div>
                     <div className={`cd-txn-amount ${isPayment ? "in" : "out"}`}>

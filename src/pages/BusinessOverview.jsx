@@ -14,6 +14,9 @@ const [todayDue, setTodayDue] = useState(0);
 const [todayCollection, setTodayCollection] = useState(0);
 const [paidToday, setPaidToday] = useState(0);
 const [totalReceived, setTotalReceived] = useState(0);
+const [lastUpdated, setLastUpdated] = useState("");
+
+const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     if (!user) return;
@@ -32,8 +35,6 @@ let todayDueAmount = 0;
 let todayCollectionAmount = 0;
 let paidCount = 0;
 let received = 0;
-
-const today = new Date().toISOString().split("T")[0];
 
     for (const customerDoc of snap.docs) {
   const customer = customerDoc.data();
@@ -54,17 +55,21 @@ const today = new Date().toISOString().split("T")[0];
   txSnap.forEach((tx) => {
     const t = tx.data();
 
+    const amount = Number(t.amount || 0);
+
+    // Total Received
     if (t.type === "payment") {
-      received += Number(t.amount || 0);
+      received += amount;
     }
 
+    // Today's Report
     if (t.createdDate === today) {
       if (t.type === "due") {
-        todayDueAmount += Number(t.amount || 0);
+        todayDueAmount += amount;
       }
 
       if (t.type === "payment") {
-        todayCollectionAmount += Number(t.amount || 0);
+        todayCollectionAmount += amount;
         paidCount++;
       }
     }
@@ -82,6 +87,16 @@ setTodayCollection(todayCollectionAmount);
 setPaidToday(paidCount);
 
 setTotalReceived(received);
+
+setLastUpdated(
+  new Date().toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+);
   };
 
   return (
@@ -94,7 +109,45 @@ paddingBottom: "110px",
 fontFamily: "system-ui",
       }}
     >
-      <h1>📊 Business Overview</h1>
+      <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    flexWrap: "wrap",
+    gap: "10px",
+  }}
+>
+  <div>
+    <h1 style={{ margin: 0 }}>📊 Business Overview</h1>
+
+    <div
+      style={{
+        color: "#6B7280",
+        fontSize: "13px",
+        marginTop: "5px",
+      }}
+    >
+      Last Updated : {lastUpdated}
+    </div>
+  </div>
+
+  <button
+    onClick={loadOverview}
+    style={{
+      background: "#2563EB",
+      color: "#fff",
+      border: "none",
+      padding: "10px 18px",
+      borderRadius: "10px",
+      cursor: "pointer",
+      fontWeight: 700,
+    }}
+  >
+    🔄 Refresh
+  </button>
+</div>
 
       <div
         style={{
