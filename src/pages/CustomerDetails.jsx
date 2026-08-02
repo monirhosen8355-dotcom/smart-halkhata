@@ -357,6 +357,7 @@ function CustomerDetails() {
         note: dueNote.trim(),
         transactionId: generateTransactionId(),
         createdAt: serverTimestamp(),
+createdDate: new Date().toISOString().split("T")[0],
       }
     );
 
@@ -395,6 +396,7 @@ function CustomerDetails() {
         note: paymentNote.trim(),
         transactionId: generateTransactionId(),
         createdAt: serverTimestamp(),
+createdDate: new Date().toISOString().split("T")[0],
       }
     );
 
@@ -728,34 +730,7 @@ function CustomerDetails() {
                         <div><strong>Note:</strong> {selectedTransaction.note}</div>
                       )}
                     </div>
-
-                    {isEditingTransaction ? (
-                      <div style={{ marginTop: "16px" }}>
-                        <input
-                          type="number"
-                          value={editAmount}
-                          onChange={(e) => setEditAmount(e.target.value)}
-                          className="cd-input"
-                          style={{ marginBottom: "10px" }}
-                        />
-                        <button onClick={() => handleEditTransaction(selectedTransaction, editAmount)} className="cd-btn" style={{ background: "#16A34A" }}>
-                          Save Changes
-                        </button>
-                      </div>
-                    ) : (
-                      <div style={{ display: "flex", gap: "8px", marginTop: "18px" }}>
-                        <button
-                          onClick={() => { setIsEditingTransaction(true); setEditAmount(selectedTransaction.amount); }}
-                          className="cd-btn"
-                          style={{ background: "#2563EB" }}
-                        >
-                          Edit
-                        </button>
-                        <button onClick={() => handleDeleteTransaction(selectedTransaction)} className="cd-btn" style={{ background: "#DC2626" }}>
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    
 
                     <button onClick={() => handleDownloadPDF(selectedTransaction)} className="cd-btn" style={{ background: "#111827", marginTop: "10px" }}>
                       Download PDF Receipt

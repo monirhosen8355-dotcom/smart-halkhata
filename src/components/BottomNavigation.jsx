@@ -26,12 +26,12 @@ function BottomNavigation() {
       icon: <FiUsers />,
       path: "/customers",
     },
-    {
-      key: "reports",
-      title: "Reports",
-      icon: <FiBarChart2 />,
-      path: "/dashboard",
-    },
+   {
+  key: "reports",
+  title: "Reports",
+  icon: <FiBarChart2 />,
+  path: "/business-overview",
+},
     {
       key: "settings",
       title: "Settings",

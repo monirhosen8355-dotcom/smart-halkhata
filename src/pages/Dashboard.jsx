@@ -10,7 +10,8 @@ const NAV_CARDS = [
   { key: "customers", title: "Customers", icon: "👥", path: "/customers" },
   { key: "shop-profile", title: "Shop Profile", icon: "🏬", path: "/shop-profile" },
   { key: "settings", title: "Settings", icon: "⚙️", path: "/settings" },
-  { key: "staff-management", title: "Staff", icon: "🧑‍💼", path: "/staff-management" },
+  { key: "business-overview", title: "Overview", icon: "📊", path: "/business-overview" },
+{ key: "staff-management", title: "Staff", icon: "🧑‍💼", path: "/staff-management" },
 ];
 
 function Dashboard() {

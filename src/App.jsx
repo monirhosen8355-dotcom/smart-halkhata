@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import StaffManagement from "./pages/StaffManagement";
 import ShopProfile from "./pages/ShopProfile";
 import Settings from "./pages/Settings";
+import BusinessOverview from "./pages/BusinessOverview";
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
 <Route
   path="/settings"
   element={<Settings />}
+/>
+
+<Route
+  path="/business-overview"
+  element={<BusinessOverview />}
 />
 <Route
   path="/staff-management"

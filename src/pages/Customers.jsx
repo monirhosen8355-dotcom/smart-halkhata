@@ -108,6 +108,7 @@ function Customers() {
           phone,
           due: 0,
           createdAt: serverTimestamp(),
+createdDate: new Date().toISOString().split("T")[0],
         }
       );
 
