@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import BottomNavigation from "../components/BottomNavigation";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { db, storage } from "../firebase";
@@ -426,7 +427,7 @@ function CustomerDetails() {
           overflow-x: hidden;
           background: #F3F4F6;
           font-family: system-ui, -apple-system, sans-serif;
-          padding: 16px 12px 32px;
+          padding: 16px 12px 110px;
         }
         @media (min-width: 640px) { .cd-root { padding: 24px 20px 40px; } }
 
@@ -769,7 +770,9 @@ function CustomerDetails() {
             </div>
           </div>
         )}
-      </div>
+            </div>
+
+      <BottomNavigation />
     </div>
   );
 }

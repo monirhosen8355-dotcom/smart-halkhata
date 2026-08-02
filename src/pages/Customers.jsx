@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
 import { logActivity } from "../utils/logActivity";
 import { useNavigate } from "react-router-dom";
+import BottomNavigation from "../components/BottomNavigation";
 import {
   collection,
   addDoc,
@@ -467,7 +468,9 @@ function Customers() {
             })}
           </div>
         )}
-      </div>
+            </div>
+
+      <BottomNavigation />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import BottomNavigation from "../components/BottomNavigation";
 
 function Settings() {
   const { user } = useContext(AuthContext);
@@ -101,7 +102,7 @@ function Settings() {
         minHeight: "100vh",
         background: "#F3F4F6",
         fontFamily: "system-ui, -apple-system, sans-serif",
-        padding: "32px 20px",
+        padding: "32px 20px 120px",
       }}
     >
       <div style={{ maxWidth: "640px", margin: "0 auto" }}>
@@ -213,7 +214,9 @@ function Settings() {
         >
           {saving ? "Saving..." : "Save Settings"}
         </button>
-      </div>
+            </div>
+
+      <BottomNavigation />
     </div>
   );
 }

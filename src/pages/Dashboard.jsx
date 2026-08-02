@@ -4,6 +4,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useEffect } from "react";
+import BottomNavigation from "../components/BottomNavigation";
 
 const NAV_CARDS = [
   { key: "customers", title: "Customers", icon: "👥", path: "/customers" },
@@ -215,7 +216,9 @@ function Dashboard() {
             <div className="hd-tile-title">Logout</div>
           </div>
         </div>
-      </div>
+           </div>
+
+      <BottomNavigation />
     </div>
   );
 }
