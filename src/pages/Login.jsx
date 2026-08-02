@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -8,24 +8,19 @@ function Login() {
   const { register, login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [mode, setMode] = useState("login"); // "login" | "signup"
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [mode, setMode] = useState("login");
+  const [isBursting, setIsBursting] = useState(false);
+  const burstTimer = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 780 : false
-  );
 
-  // Login fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  // Forgot password
   const [isSendingReset, setIsSendingReset] = useState(false);
-  const [resetStatus, setResetStatus] = useState(null); // { type: 'success'|'error', message }
+  const [resetStatus, setResetStatus] = useState(null);
 
-  // Signup fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [shopName, setShopName] = useState("");
@@ -39,9 +34,7 @@ function Login() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 780);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => clearTimeout(burstTimer.current);
   }, []);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,18 +45,16 @@ function Login() {
     setErrors({});
     setResetStatus(null);
     setMode(nextMode);
-    if (!isMobile) setIsAnimating(true);
+    setIsBursting(true);
+    clearTimeout(burstTimer.current);
+    burstTimer.current = setTimeout(() => setIsBursting(false), 750);
   };
 
   const handleLogin = async () => {
     const newErrors = {};
     if (!emailRegex.test(email)) newErrors.email = "Enter a valid email address";
     if (!password) newErrors.password = "Password is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
 
     setErrors({});
     setIsSubmitting(true);
@@ -86,13 +77,8 @@ function Login() {
     if (!emailRegex.test(signupEmail)) newErrors.signupEmail = "Enter a valid email address";
     if (!signupPassword || signupPassword.length < 6)
       newErrors.signupPassword = "Password must be at least 6 characters";
-    if (signupPassword !== confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    if (signupPassword !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
 
     setErrors({});
     setIsSubmitting(true);
@@ -108,17 +94,12 @@ function Login() {
 
   const handleForgotPassword = async () => {
     setResetStatus(null);
-
     const targetEmail = email.trim();
 
     if (!targetEmail) {
-      setResetStatus({
-        type: "error",
-        message: 'Enter your email address above, then click "Forgot password?" again.',
-      });
+      setResetStatus({ type: "error", message: 'Enter your email above, then tap "Forgot password?" again.' });
       return;
     }
-
     if (!emailRegex.test(targetEmail)) {
       setResetStatus({ type: "error", message: "That email address doesn't look valid." });
       return;
@@ -127,10 +108,7 @@ function Login() {
     setIsSendingReset(true);
     try {
       await sendPasswordResetEmail(auth, targetEmail);
-      setResetStatus({
-        type: "success",
-        message: `Password reset email sent to ${targetEmail}. Check your inbox.`,
-      });
+      setResetStatus({ type: "success", message: `Reset email sent to ${targetEmail}.` });
     } catch (error) {
       setResetStatus({ type: "error", message: error.message });
     } finally {
@@ -142,39 +120,27 @@ function Login() {
     padding: "12px 14px",
     borderRadius: "10px",
     border: `1px solid ${hasError ? "#FCA5A5" : "#E5E7EB"}`,
-    fontSize: "13.5px",
+    fontSize: "14px",
     outline: "none",
     width: "100%",
     boxSizing: "border-box",
   });
 
-  const errorText = {
-    fontSize: "12px",
-    color: "#DC2626",
-    marginTop: "4px",
-  };
-
-  const labelStyle = {
-    fontSize: "12px",
-    fontWeight: 700,
-    color: "#6B7280",
-    marginBottom: "5px",
-    display: "block",
-  };
+  const errorText = { fontSize: "12px", color: "#DC2626", marginTop: "4px" };
+  const labelStyle = { fontSize: "12px", fontWeight: 700, color: "#6B7280", marginBottom: "5px", display: "block" };
 
   const primaryBtn = {
     width: "100%",
-    padding: "13px",
+    padding: "14px",
     borderRadius: "10px",
     border: "none",
     background: "#2563EB",
     color: "#fff",
     fontWeight: 700,
-    fontSize: "14.5px",
+    fontSize: "15px",
     cursor: isSubmitting ? "not-allowed" : "pointer",
     opacity: isSubmitting ? 0.6 : 1,
     boxShadow: "0 4px 12px rgba(37,99,235,0.25)",
-    transition: "opacity 0.2s ease",
   };
 
   const eyeToggle = {
@@ -190,173 +156,251 @@ function Login() {
     border: "none",
   };
 
-  const brandingContent = (
-    <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-      <div>
-        <div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "0.3px" }}>
-          Smart Halkhata
-        </div>
-        <div style={{ fontSize: "13px", color: "#93C5FD", marginTop: "4px" }}>
-          Shop Management Software
-        </div>
-      </div>
-
-      <div>
-        <div style={{ fontSize: "26px", fontWeight: 700, lineHeight: 1.35, maxWidth: "360px" }}>
-          Run your shop's credit ledger like a bank runs its ledger.
-        </div>
-        <p style={{ fontSize: "14px", color: "#CBD5E1", marginTop: "14px", maxWidth: "340px" }}>
-          Track customer dues, payments, and history — all in one secure, premium platform built for modern shops.
-        </p>
-      </div>
-    </div>
-  );
-
-  const brandClass = isAnimating
-    ? mode === "signup" ? "brand-anim-to-signup" : "brand-anim-to-login"
-    : mode === "signup" ? "brand-idle-signup" : "brand-idle-login";
-
-  const authClass = isAnimating
-    ? mode === "signup" ? "auth-anim-to-signup" : "auth-anim-to-login"
-    : mode === "signup" ? "auth-idle-signup" : "auth-idle-login";
-
-  const brandingPanelStyle = isMobile
-    ? {
-        width: "100%",
-        minHeight: "220px",
-        background: "linear-gradient(160deg, #111827 0%, #1E3A8A 100%)",
-        color: "#fff",
-        padding: "36px 28px",
-        position: "relative",
-        overflow: "hidden",
-      }
-    : {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "50%",
-        height: "100%",
-        background: "linear-gradient(160deg, #111827 0%, #1E3A8A 100%)",
-        color: "#fff",
-        padding: "48px",
-        overflow: "hidden",
-        boxSizing: "border-box",
-      };
-
-  const authPanelWrapperStyle = isMobile
-    ? {
-        width: "100%",
-        padding: "32px 20px",
-        boxSizing: "border-box",
-      }
-    : {
-        position: "absolute",
-        top: 0,
-        left: "50%",
-        width: "50%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "40px 24px",
-        boxSizing: "border-box",
-      };
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        background: "#F3F4F6",
-        position: isMobile ? "static" : "relative",
-        overflow: "hidden",
-      }}
-    >
+    <div className="halkhata-login-root">
       <style>{`
-        @keyframes floatShapeA {
-          0%   { transform: translate(0px, 0px) scale(1); }
-          50%  { transform: translate(20px, -24px) scale(1.06); }
-          100% { transform: translate(0px, 0px) scale(1); }
+        * { box-sizing: border-box; }
+        .halkhata-login-root {
+          min-height: 100vh;
+          width: 100%;
+          overflow-x: hidden;
+          font-family: system-ui, -apple-system, sans-serif;
+          background: #F3F4F6;
+          display: flex;
+          flex-direction: column;
         }
-        @keyframes floatShapeB {
-          0%   { transform: translate(0px, 0px) rotate(20deg); }
-          50%  { transform: translate(-16px, 18px) rotate(28deg); }
-          100% { transform: translate(0px, 0px) rotate(20deg); }
-        }
-        @keyframes floatShapeC {
-          0%   { transform: translate(0px, 0px); }
-          50%  { transform: translate(14px, 14px); }
-          100% { transform: translate(0px, 0px); }
-        }
-        .shape-a { animation: floatShapeA 7s ease-in-out infinite; }
-        .shape-b { animation: floatShapeB 9s ease-in-out infinite; }
-        .shape-c { animation: floatShapeC 6s ease-in-out infinite; }
-
-        @keyframes brandToSignup {
-          0%   { transform: translateX(0%) scale(1); }
-          40%  { transform: translateX(0%) scale(0.9); }
-          60%  { transform: translateX(100%) scale(0.9); }
-          100% { transform: translateX(100%) scale(1); }
-        }
-        @keyframes brandToLogin {
-          0%   { transform: translateX(100%) scale(1); }
-          40%  { transform: translateX(100%) scale(0.9); }
-          60%  { transform: translateX(0%) scale(0.9); }
-          100% { transform: translateX(0%) scale(1); }
-        }
-        @keyframes authToSignup {
-          0%   { transform: translateX(0%) scale(1); }
-          40%  { transform: translateX(0%) scale(0.9); }
-          60%  { transform: translateX(-100%) scale(0.9); }
-          100% { transform: translateX(-100%) scale(1); }
-        }
-        @keyframes authToLogin {
-          0%   { transform: translateX(-100%) scale(1); }
-          40%  { transform: translateX(-100%) scale(0.9); }
-          60%  { transform: translateX(0%) scale(0.9); }
-          100% { transform: translateX(0%) scale(1); }
+        @media (min-width: 900px) {
+          .halkhata-login-root { flex-direction: row; }
         }
 
-        .brand-idle-login  { transform: translateX(0%) scale(1); }
-        .brand-idle-signup { transform: translateX(100%) scale(1); }
-        .brand-anim-to-signup { animation: brandToSignup 700ms cubic-bezier(0.65,0,0.35,1) forwards; }
-        .brand-anim-to-login  { animation: brandToLogin 700ms cubic-bezier(0.65,0,0.35,1) forwards; }
+        /* ============ HERO ============ */
+        .hl-hero {
+          position: relative;
+          background: linear-gradient(160deg, #0B1120 0%, #1E3A8A 100%);
+          color: #fff;
+          overflow: hidden;
+          flex-shrink: 0;
+          height: 30vh;
+          min-height: 210px;
+          max-height: 280px;
+          padding: 18px 20px;
+        }
+        @media (min-width: 900px) {
+          .hl-hero {
+            width: 46%;
+            height: auto;
+            min-height: 100vh;
+            max-height: none;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+          }
+        }
 
-        .auth-idle-login  { transform: translateX(0%) scale(1); }
-        .auth-idle-signup { transform: translateX(-100%) scale(1); }
-        .auth-anim-to-signup { animation: authToSignup 700ms cubic-bezier(0.65,0,0.35,1) forwards; }
-        .auth-anim-to-login  { animation: authToLogin 700ms cubic-bezier(0.65,0,0.35,1) forwards; }
+        .hl-heading { font-size: 17px; font-weight: 800; }
+        @media (min-width: 900px) { .hl-heading { font-size: 22px; } }
+        .hl-sub { font-size: 10.5px; color: #93C5FD; margin-top: 2px; }
+        @media (min-width: 900px) { .hl-sub { font-size: 13px; margin-top: 4px; } }
+
+        .hl-tagline {
+          font-size: 13px; font-weight: 700; line-height: 1.35;
+          max-width: 180px; position: relative; z-index: 2;
+        }
+        @media (min-width: 900px) { .hl-tagline { font-size: 26px; max-width: 360px; } }
+        .hl-desc { display: none; }
+        @media (min-width: 900px) {
+          .hl-desc { display: block; font-size: 14px; color: #CBD5E1; margin-top: 14px; max-width: 340px; }
+        }
+
+        /* ============ LEDGER BOOK (pure CSS) ============ */
+        .hl-ledger-stage {
+          position: absolute;
+          right: 8px;
+          bottom: -10px;
+          width: clamp(180px, 46vw, 220px);
+          height: clamp(180px, 46vw, 220px);
+          perspective: 1000px;
+        }
+        @media (min-width: 900px) {
+          .hl-ledger-stage {
+            right: 20px;
+            bottom: 40px;
+            width: clamp(260px, 22vw, 320px);
+            height: clamp(260px, 22vw, 320px);
+          }
+        }
+
+        .hl-ledger {
+          position: relative;
+          width: 100%;
+          height: 78%;
+          top: 10%;
+          transform: rotate(-20deg);
+          transform-style: preserve-3d;
+        }
+
+        /* page block behind cover, giving thickness */
+        .hl-ledger-pages {
+          position: absolute;
+          inset: 3% 0% 3% 6%;
+          background: repeating-linear-gradient(
+            to bottom,
+            #F8FAFC 0px, #F8FAFC 2px,
+            #E2E8F0 2px, #E2E8F0 3px
+          );
+          border-radius: 3px;
+          box-shadow: 0 1px 0 #fff inset, 2px 2px 4px rgba(0,0,0,0.25);
+        }
+
+        /* navy cover */
+        .hl-ledger-cover {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, #12224B 0%, #0B1638 100%);
+          border-radius: 6px;
+          box-shadow:
+            0 18px 30px rgba(0,0,0,0.45),
+            inset 0 0 0 1px rgba(255,255,255,0.06);
+        }
+        /* spine highlight */
+        .hl-ledger-cover::before {
+          content: "";
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 14%;
+          background: linear-gradient(to right, rgba(0,0,0,0.35), transparent);
+        }
+        /* gold corner accents */
+        .hl-gold-corner {
+          position: absolute;
+          width: 22%;
+          height: 22%;
+          border: 2px solid #D4AF37;
+          opacity: 0.85;
+        }
+        .hl-gold-corner.tl { top: 6%; left: 6%; border-right: none; border-bottom: none; border-radius: 3px 0 0 0; }
+        .hl-gold-corner.br { bottom: 6%; right: 6%; border-left: none; border-top: none; border-radius: 0 0 3px 0; }
+
+        /* gold title bar */
+        .hl-ledger-title {
+          position: absolute;
+          top: 38%;
+          left: 22%;
+          right: 12%;
+          height: 12%;
+          border-top: 1.5px solid #D4AF37;
+          border-bottom: 1.5px solid #D4AF37;
+        }
+
+        /* the flipping page on the right edge, opening/closing */
+        .hl-flip-page {
+          position: absolute;
+          top: 4%;
+          right: -2%;
+          width: 46%;
+          height: 92%;
+          background: linear-gradient(120deg, #FFFFFF, #E8ECF3);
+          border-radius: 0 4px 4px 0;
+          transform-origin: left center;
+          backface-visibility: hidden;
+          box-shadow: 1px 0 6px rgba(0,0,0,0.25);
+          animation: hlPageIdle 5s ease-in-out infinite;
+        }
+        .hl-flip-page.burst { animation: hlPageBurst 700ms cubic-bezier(0.65,0,0.35,1) 1; }
+
+        @keyframes hlPageIdle {
+          0%   { transform: rotateY(0deg); }
+          20%  { transform: rotateY(-155deg); }
+          55%  { transform: rotateY(-155deg); }
+          75%  { transform: rotateY(0deg); }
+          100% { transform: rotateY(0deg); }
+        }
+        @keyframes hlPageBurst {
+          0%   { transform: rotateY(0deg); }
+          50%  { transform: rotateY(-175deg); }
+          100% { transform: rotateY(0deg); }
+        }
+
+        /* ============ CARD AREA ============ */
+        .hl-card-area {
+          flex: 1;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 20px 16px 32px;
+          width: 100%;
+        }
+        @media (min-width: 900px) {
+          .hl-card-area { align-items: center; padding: 40px 24px; width: 54%; }
+        }
+
+        .hl-flip-perspective {
+          width: 100%;
+          max-width: 400px;
+          perspective: 1400px;
+          margin-top: 4px;
+        }
+        @media (min-width: 900px) { .hl-flip-perspective { margin-top: 0; } }
+
+        .hl-flip-card {
+          position: relative;
+          display: grid;
+          transform-style: preserve-3d;
+          transition: transform 700ms cubic-bezier(0.65, 0, 0.35, 1);
+          will-change: transform;
+        }
+        .hl-flip-card.is-signup { transform: rotateY(-180deg); }
+
+        .hl-face {
+          grid-area: 1 / 1;
+          background: #fff;
+          border-radius: 20px;
+          border: 1px solid #E5E7EB;
+          box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+          padding: 22px 18px;
+          backface-visibility: hidden;
+        }
+        @media (min-width: 900px) { .hl-face { padding: 34px 30px; } }
+        .hl-face-back { transform: rotateY(180deg); }
       `}</style>
 
-      {/* Branding panel */}
-      <div
-        style={brandingPanelStyle}
-        className={isMobile ? "" : brandClass}
-        onAnimationEnd={() => setIsAnimating(false)}
-      >
-        <div className="shape-a" style={{ position: "absolute", width: "280px", height: "280px", borderRadius: "50%", background: "rgba(37,99,235,0.25)", top: "-100px", right: "-80px" }} />
-        <div className="shape-b" style={{ position: "absolute", width: "180px", height: "180px", borderRadius: "40px", background: "rgba(255,255,255,0.06)", bottom: "60px", left: "-40px" }} />
-        <div className="shape-c" style={{ position: "absolute", width: "120px", height: "120px", borderRadius: "50%", border: "2px solid rgba(255,255,255,0.15)", bottom: "-30px", right: "60px" }} />
-        {brandingContent}
+      {/* HERO */}
+      <div className="hl-hero">
+        <div>
+          <div className="hl-heading">Smart Halkhata</div>
+          <div className="hl-sub">Shop Management Software</div>
+        </div>
+
+        <div className="hl-tagline">
+          Run your shop's ledger like a bank runs its books.
+          <p className="hl-desc">
+            Track customer dues, payments, and history — all in one secure, premium platform built for modern shops.
+          </p>
+        </div>
+
+        <div className="hl-ledger-stage">
+          <div className="hl-ledger">
+            <div className="hl-ledger-pages" />
+            <div className="hl-ledger-cover">
+              <div className="hl-gold-corner tl" />
+              <div className="hl-gold-corner br" />
+              <div className="hl-ledger-title" />
+            </div>
+            <div className={`hl-flip-page ${isBursting ? "burst" : ""}`} />
+          </div>
+        </div>
       </div>
 
-      {/* Auth card panel */}
-      <div style={authPanelWrapperStyle} className={isMobile ? "" : authClass}>
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "400px",
-            background: "#fff",
-            borderRadius: "20px",
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 12px 32px rgba(0,0,0,0.06)",
-            padding: "34px 30px",
-          }}
-        >
-          {mode === "login" ? (
-            <>
-              <h2 style={{ margin: 0, fontSize: "22px", color: "#111827" }}>Welcome back</h2>
-              <p style={{ margin: "6px 0 24px", fontSize: "13.5px", color: "#6B7280" }}>
+      {/* AUTH CARD */}
+      <div className="hl-card-area">
+        <div className="hl-flip-perspective">
+          <div className={`hl-flip-card ${mode === "signup" ? "is-signup" : ""}`}>
+
+            {/* LOGIN FACE */}
+            <div className="hl-face">
+              <h2 style={{ margin: 0, fontSize: "20px", color: "#111827" }}>Welcome back</h2>
+              <p style={{ margin: "6px 0 18px", fontSize: "13px", color: "#6B7280" }}>
                 Sign in to your shop account to continue
               </p>
 
@@ -365,45 +409,23 @@ function Login() {
                   {errors.form}
                 </div>
               )}
-
               {resetStatus && (
-                <div
-                  style={{
-                    background: resetStatus.type === "success" ? "#F0FDF4" : "#FEF2F2",
-                    color: resetStatus.type === "success" ? "#16A34A" : "#DC2626",
-                    fontSize: "12.5px",
-                    padding: "10px 12px",
-                    borderRadius: "8px",
-                    marginBottom: "14px",
-                  }}
-                >
+                <div style={{ background: resetStatus.type === "success" ? "#F0FDF4" : "#FEF2F2", color: resetStatus.type === "success" ? "#16A34A" : "#DC2626", fontSize: "12.5px", padding: "10px 12px", borderRadius: "8px", marginBottom: "14px" }}>
                   {resetStatus.message}
                 </div>
               )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <div>
                   <label style={labelStyle}>Email</label>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={inputStyle(errors.email)}
-                  />
+                  <input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle(errors.email)} />
                   {errors.email && <div style={errorText}>{errors.email}</div>}
                 </div>
 
                 <div>
                   <label style={labelStyle}>Password</label>
                   <div style={{ position: "relative" }}>
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      style={{ ...inputStyle(errors.password), paddingRight: "50px" }}
-                    />
+                    <input type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} style={{ ...inputStyle(errors.password), paddingRight: "50px" }} />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} style={eyeToggle}>
                       {showPassword ? "Hide" : "Show"}
                     </button>
@@ -411,40 +433,33 @@ function Login() {
                   {errors.password && <div style={errorText}>{errors.password}</div>}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12.5px" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "6px", color: "#374151", cursor: "pointer" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", flexWrap: "wrap", gap: "8px" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "6px", color: "#374151" }}>
                     <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                     Remember me
                   </label>
-                  <span
-                    onClick={isSendingReset ? undefined : handleForgotPassword}
-                    style={{
-                      color: "#2563EB",
-                      fontWeight: 600,
-                      cursor: isSendingReset ? "not-allowed" : "pointer",
-                      opacity: isSendingReset ? 0.6 : 1,
-                    }}
-                  >
+                  <span onClick={isSendingReset ? undefined : handleForgotPassword} style={{ color: "#2563EB", fontWeight: 600, cursor: isSendingReset ? "not-allowed" : "pointer", opacity: isSendingReset ? 0.6 : 1 }}>
                     {isSendingReset ? "Sending..." : "Forgot password?"}
                   </span>
                 </div>
 
-                <button onClick={handleLogin} disabled={isSubmitting} style={{ ...primaryBtn, marginTop: "4px" }}>
+                <button onClick={handleLogin} disabled={isSubmitting} style={primaryBtn}>
                   {isSubmitting ? "Please wait..." : "Login"}
                 </button>
               </div>
 
-              <p style={{ fontSize: "13px", color: "#6B7280", textAlign: "center", marginTop: "22px" }}>
+              <p style={{ fontSize: "12.5px", color: "#6B7280", textAlign: "center", marginTop: "18px" }}>
                 Don't have an account?{" "}
                 <span onClick={() => switchMode("signup")} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>
                   Create Account
                 </span>
               </p>
-            </>
-          ) : (
-            <>
-              <h2 style={{ margin: 0, fontSize: "22px", color: "#111827" }}>Create your account</h2>
-              <p style={{ margin: "6px 0 20px", fontSize: "13.5px", color: "#6B7280" }}>
+            </div>
+
+            {/* SIGNUP FACE */}
+            <div className="hl-face hl-face-back">
+              <h2 style={{ margin: 0, fontSize: "20px", color: "#111827" }}>Create your account</h2>
+              <p style={{ margin: "6px 0 14px", fontSize: "13px", color: "#6B7280" }}>
                 Set up your shop in a few seconds
               </p>
 
@@ -454,7 +469,7 @@ function Login() {
                 </div>
               )}
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 <div style={{ display: "flex", gap: "10px" }}>
                   <div style={{ flex: 1 }}>
                     <label style={labelStyle}>First Name</label>
@@ -489,12 +504,7 @@ function Login() {
                 <div>
                   <label style={labelStyle}>Password</label>
                   <div style={{ position: "relative" }}>
-                    <input
-                      type={showSignupPassword ? "text" : "password"}
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      style={{ ...inputStyle(errors.signupPassword), paddingRight: "50px" }}
-                    />
+                    <input type={showSignupPassword ? "text" : "password"} value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} style={{ ...inputStyle(errors.signupPassword), paddingRight: "50px" }} />
                     <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} style={eyeToggle}>
                       {showSignupPassword ? "Hide" : "Show"}
                     </button>
@@ -505,12 +515,7 @@ function Login() {
                 <div>
                   <label style={labelStyle}>Confirm Password</label>
                   <div style={{ position: "relative" }}>
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      style={{ ...inputStyle(errors.confirmPassword), paddingRight: "50px" }}
-                    />
+                    <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} style={{ ...inputStyle(errors.confirmPassword), paddingRight: "50px" }} />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={eyeToggle}>
                       {showConfirmPassword ? "Hide" : "Show"}
                     </button>
@@ -518,19 +523,20 @@ function Login() {
                   {errors.confirmPassword && <div style={errorText}>{errors.confirmPassword}</div>}
                 </div>
 
-                <button onClick={handleRegister} disabled={isSubmitting} style={{ ...primaryBtn, marginTop: "4px" }}>
+                <button onClick={handleRegister} disabled={isSubmitting} style={primaryBtn}>
                   {isSubmitting ? "Please wait..." : "Create Account"}
                 </button>
               </div>
 
-              <p style={{ fontSize: "13px", color: "#6B7280", textAlign: "center", marginTop: "20px" }}>
+              <p style={{ fontSize: "12.5px", color: "#6B7280", textAlign: "center", marginTop: "14px" }}>
                 Already have an account?{" "}
                 <span onClick={() => switchMode("login")} style={{ color: "#2563EB", fontWeight: 700, cursor: "pointer" }}>
                   Login
                 </span>
               </p>
-            </>
-          )}
+            </div>
+
+          </div>
         </div>
       </div>
     </div>

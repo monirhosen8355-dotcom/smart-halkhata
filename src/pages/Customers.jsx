@@ -22,8 +22,6 @@ function Customers() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
   const [reminders, setReminders] = useState([]);
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [hoveredFilter, setHoveredFilter] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -130,105 +128,251 @@ function Customers() {
     }
   };
 
-  const filterBtnStyle = (isActive, isHovered) => ({
-    padding: "9px 18px",
-    borderRadius: "10px",
-    border: isActive ? "1px solid #2563EB" : "1px solid #E5E7EB",
-    background: isActive ? "#2563EB" : isHovered ? "#F3F4F6" : "#fff",
-    color: isActive ? "#fff" : "#374151",
-    fontSize: "13.5px",
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.15s ease",
-  });
-
   const initials = (customerName) =>
     (customerName || "?").trim().charAt(0).toUpperCase();
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F3F4F6",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        padding: "32px 20px",
-      }}
-    >
-      <div style={{ maxWidth: "980px", margin: "0 auto" }}>
-        {/* Top section */}
-        <div style={{ marginBottom: "28px" }}>
-          <h1 style={{ margin: 0, fontSize: "26px", color: "#111827" }}>
-            Customers
-          </h1>
-          <p style={{ margin: "6px 0 0", color: "#6B7280", fontSize: "14px" }}>
-            Manage every customer's account and credit in one place
-          </p>
-        </div>
+  const visibleCustomers = customers
+    .filter((customer) => {
+      const term = searchTerm.trim().toLowerCase();
+      if (!term) return true;
+      return (
+        customer.name?.toLowerCase().includes(term) ||
+        customer.phone?.toLowerCase().includes(term)
+      );
+    })
+    .filter((customer) => {
+      if (filterStatus === "due") return Number(customer.due) > 0;
+      if (filterStatus === "paid") return Number(customer.due) === 0;
+      return true;
+    })
+    .sort((a, b) => {
+      const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return sortOrder === "newest" ? bTime - aTime : aTime - bTime;
+    });
 
-        {/* Add Customer card */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "16px",
-            padding: "24px",
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-            marginBottom: "28px",
-          }}
-        >
-          <div style={{ fontSize: "16px", fontWeight: 700, color: "#111827", marginBottom: "16px" }}>
-            + Add New Customer
-          </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "12px",
-              flexWrap: "wrap",
-              alignItems: "center",
-            }}
-          >
+  return (
+    <div className="hc-root">
+      <style>{`
+        * { box-sizing: border-box; }
+        .hc-root {
+          min-height: 100vh;
+          width: 100%;
+          overflow-x: hidden;
+          background: #F3F4F6;
+          font-family: system-ui, -apple-system, sans-serif;
+          padding: 16px 12px 32px;
+        }
+        @media (min-width: 640px) { .hc-root { padding: 24px 20px 40px; } }
+
+        .hc-wrap { max-width: 780px; margin: 0 auto; }
+
+        .hc-title { margin: 0; font-size: 20px; color: #111827; }
+        @media (min-width: 640px) { .hc-title { font-size: 26px; } }
+        .hc-subtitle { margin: 4px 0 16px; color: #6B7280; font-size: 12.5px; }
+        @media (min-width: 640px) { .hc-subtitle { font-size: 14px; margin-bottom: 22px; } }
+
+        .hc-card {
+          background: #fff;
+          border-radius: 16px;
+          border: 1px solid #E5E7EB;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+          padding: 16px;
+          margin-bottom: 16px;
+        }
+        @media (min-width: 640px) { .hc-card { padding: 22px; margin-bottom: 20px; } }
+
+        .hc-card-title {
+          font-size: 13.5px; font-weight: 700; color: #111827; margin-bottom: 12px;
+        }
+
+        .hc-input {
+          padding: 11px 13px;
+          border-radius: 10px;
+          border: 1px solid #E5E7EB;
+          font-size: 13.5px;
+          outline: none;
+          width: 100%;
+        }
+
+        .hc-add-row {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        @media (min-width: 560px) {
+          .hc-add-row { flex-direction: row; flex-wrap: wrap; align-items: center; }
+          .hc-add-row .hc-input { flex: 1 1 160px; }
+        }
+
+        .hc-btn-primary {
+          padding: 11px 18px;
+          border-radius: 10px;
+          border: none;
+          background: #2563EB;
+          color: #fff;
+          font-weight: 700;
+          font-size: 13.5px;
+          cursor: pointer;
+          width: 100%;
+        }
+        @media (min-width: 560px) { .hc-btn-primary { width: auto; white-space: nowrap; } }
+
+        .hc-reminder-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 9px 0;
+          border-bottom: 1px solid #F3F4F6;
+          gap: 8px;
+        }
+        .hc-reminder-row:last-child { border-bottom: none; }
+        .hc-reminder-text { font-size: 12.5px; color: #374151; }
+        .hc-reminder-btn {
+          padding: 5px 11px;
+          border-radius: 8px;
+          border: 1px solid #E5E7EB;
+          background: #fff;
+          font-size: 11.5px;
+          font-weight: 600;
+          cursor: pointer;
+          color: #374151;
+          white-space: nowrap;
+        }
+
+        .hc-search {
+          width: 100%;
+          padding: 11px 14px;
+          border-radius: 10px;
+          border: 1px solid #E5E7EB;
+          font-size: 13.5px;
+          outline: none;
+          margin-bottom: 12px;
+        }
+
+        .hc-btn-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .hc-btn-row + .hc-btn-row { margin-top: 10px; }
+
+        .hc-chip {
+          padding: 7px 14px;
+          border-radius: 9px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          border: 1px solid #E5E7EB;
+          background: #fff;
+          color: #374151;
+        }
+        .hc-chip.active {
+          background: #2563EB;
+          border-color: #2563EB;
+          color: #fff;
+        }
+
+        .hc-list-label {
+          font-size: 12.5px;
+          font-weight: 700;
+          color: #6B7280;
+          margin: 4px 0 10px;
+        }
+
+        .hc-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        @media (min-width: 560px) { .hc-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 900px) { .hc-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .hc-customer-card {
+          background: #fff;
+          border-radius: 14px;
+          border: 1px solid #E5E7EB;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+          padding: 13px 14px;
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .hc-customer-card:active { transform: scale(0.98); }
+
+        .hc-avatar {
+          width: 40px; height: 40px;
+          border-radius: 50%;
+          background: #EFF6FF;
+          color: #2563EB;
+          display: flex; align-items: center; justify-content: center;
+          font-weight: 700; font-size: 15px;
+          flex-shrink: 0;
+        }
+        .hc-avatar.photo { object-fit: cover; }
+
+        .hc-info { flex: 1; min-width: 0; }
+        .hc-name {
+          font-size: 14px; font-weight: 700; color: #111827;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .hc-phone { font-size: 11.5px; color: #6B7280; }
+
+        .hc-badge {
+          display: inline-block;
+          padding: 3px 9px;
+          border-radius: 999px;
+          font-size: 10.5px;
+          font-weight: 700;
+          margin-top: 4px;
+        }
+        .hc-badge.due { background: #FEF2F2; color: #DC2626; }
+        .hc-badge.paid { background: #F0FDF4; color: #16A34A; }
+
+        .hc-details-btn {
+          padding: 7px 12px;
+          border-radius: 9px;
+          border: none;
+          background: #111827;
+          color: #fff;
+          font-size: 11.5px;
+          font-weight: 700;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .hc-empty {
+          text-align: center;
+          color: #9CA3AF;
+          font-size: 13px;
+          padding: 30px 16px;
+        }
+      `}</style>
+
+      <div className="hc-wrap">
+        <h1 className="hc-title">Customers</h1>
+        <p className="hc-subtitle">Manage every customer's account and credit in one place</p>
+
+        {/* Add Customer */}
+        <div className="hc-card">
+          <div className="hc-card-title">+ Add New Customer</div>
+          <div className="hc-add-row">
             <input
               type="text"
               placeholder="Customer Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              style={{
-                flex: "1 1 200px",
-                padding: "11px 14px",
-                borderRadius: "10px",
-                border: "1px solid #E5E7EB",
-                fontSize: "14px",
-                outline: "none",
-              }}
+              className="hc-input"
             />
             <input
               type="text"
               placeholder="Phone Number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              style={{
-                flex: "1 1 200px",
-                padding: "11px 14px",
-                borderRadius: "10px",
-                border: "1px solid #E5E7EB",
-                fontSize: "14px",
-                outline: "none",
-              }}
+              className="hc-input"
             />
-            <button
-              onClick={handleAddCustomer}
-              style={{
-                padding: "11px 22px",
-                borderRadius: "10px",
-                border: "none",
-                background: "#2563EB",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: "14px",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-              }}
-            >
+            <button onClick={handleAddCustomer} className="hc-btn-primary">
               Add Customer
             </button>
           </div>
@@ -236,48 +380,13 @@ function Customers() {
 
         {/* Due Reminders */}
         {reminders.length > 0 && (
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "16px",
-              padding: "20px 24px",
-              border: "1px solid #E5E7EB",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-              marginBottom: "28px",
-            }}
-          >
-            <div style={{ fontSize: "16px", fontWeight: 700, color: "#111827", marginBottom: "12px" }}>
-              🔔 Due Reminders
-            </div>
+          <div className="hc-card">
+            <div className="hc-card-title">🔔 Due Reminders</div>
             {reminders.map((r) => (
-              <div
-                key={r.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "10px 0",
-                  borderBottom: "1px solid #F3F4F6",
-                  opacity: r.read ? 0.5 : 1,
-                }}
-              >
-                <span style={{ fontSize: "14px", color: "#374151" }}>
-                  {r.customerName} — Due ৳{r.due}
-                </span>
+              <div key={r.id} className="hc-reminder-row" style={{ opacity: r.read ? 0.5 : 1 }}>
+                <span className="hc-reminder-text">{r.customerName} — Due ৳{r.due}</span>
                 {!r.read && (
-                  <button
-                    onClick={() => markReminderRead(r.id)}
-                    style={{
-                      padding: "6px 14px",
-                      borderRadius: "8px",
-                      border: "1px solid #E5E7EB",
-                      background: "#fff",
-                      fontSize: "12.5px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      color: "#374151",
-                    }}
-                  >
+                  <button onClick={() => markReminderRead(r.id)} className="hc-reminder-btn">
                     Mark as Read
                   </button>
                 )}
@@ -287,55 +396,33 @@ function Customers() {
         )}
 
         {/* Search / Filter / Sort */}
-        <div
-          style={{
-            background: "#fff",
-            borderRadius: "16px",
-            padding: "20px 24px",
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-            marginBottom: "24px",
-          }}
-        >
+        <div className="hc-card">
           <input
             type="text"
             placeholder="🔍 Search by name or phone"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: "100%",
-              boxSizing: "border-box",
-              padding: "12px 16px",
-              borderRadius: "10px",
-              border: "1px solid #E5E7EB",
-              fontSize: "14px",
-              outline: "none",
-              marginBottom: "16px",
-            }}
+            className="hc-search"
           />
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px" }}>
+          <div className="hc-btn-row">
             {["all", "due", "paid"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                onMouseEnter={() => setHoveredFilter(status)}
-                onMouseLeave={() => setHoveredFilter(null)}
-                style={filterBtnStyle(filterStatus === status, hoveredFilter === status)}
+                className={`hc-chip ${filterStatus === status ? "active" : ""}`}
               >
                 {status === "all" ? "All" : status === "due" ? "Due" : "Paid"}
               </button>
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div className="hc-btn-row">
             {["newest", "oldest"].map((order) => (
               <button
                 key={order}
                 onClick={() => setSortOrder(order)}
-                onMouseEnter={() => setHoveredFilter(order)}
-                onMouseLeave={() => setHoveredFilter(null)}
-                style={filterBtnStyle(sortOrder === order, hoveredFilter === order)}
+                className={`hc-chip ${sortOrder === order ? "active" : ""}`}
               >
                 {order === "newest" ? "Newest" : "Oldest"}
               </button>
@@ -344,134 +431,42 @@ function Customers() {
         </div>
 
         {/* Customer List */}
-        <div style={{ fontSize: "14px", fontWeight: 700, color: "#6B7280", marginBottom: "14px" }}>
-          Customer List
-        </div>
+        <div className="hc-list-label">Customer List</div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "16px",
-          }}
-        >
-          {customers
-            .filter((customer) => {
-              const term = searchTerm.trim().toLowerCase();
-              if (!term) return true;
-              return (
-                customer.name?.toLowerCase().includes(term) ||
-                customer.phone?.toLowerCase().includes(term)
-              );
-            })
-            .filter((customer) => {
-              if (filterStatus === "due") return Number(customer.due) > 0;
-              if (filterStatus === "paid") return Number(customer.due) === 0;
-              return true;
-            })
-            .sort((a, b) => {
-              const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-              const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-              return sortOrder === "newest" ? bTime - aTime : aTime - bTime;
-            })
-            .map((customer) => {
+        {visibleCustomers.length === 0 ? (
+          <div className="hc-card hc-empty">No customers match this view.</div>
+        ) : (
+          <div className="hc-grid">
+            {visibleCustomers.map((customer) => {
               const hasDue = Number(customer.due) > 0;
-              const isHovered = hoveredCard === customer.id;
 
               return (
-                <div
-                  key={customer.id}
-                  onMouseEnter={() => setHoveredCard(customer.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  style={{
-                    background: "#fff",
-                    borderRadius: "16px",
-                    padding: "20px",
-                    border: "1px solid #E5E7EB",
-                    boxShadow: isHovered
-                      ? "0 12px 24px rgba(0,0,0,0.10)"
-                      : "0 2px 6px rgba(0,0,0,0.04)",
-                    transform: isHovered ? "translateY(-4px)" : "translateY(0)",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
-                    {customer.photoUrl ? (
-                      <img
-                        src={customer.photoUrl}
-                        alt={customer.name}
-                        style={{
-                          width: "48px",
-                          height: "48px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          flexShrink: 0,
-                        }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: "48px",
-                          height: "48px",
-                          borderRadius: "50%",
-                          background: "#EFF6FF",
-                          color: "#2563EB",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 700,
-                          fontSize: "18px",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {initials(customer.name)}
-                      </div>
-                    )}
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: "15.5px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {customer.name}
-                      </div>
-                      <div style={{ fontSize: "13px", color: "#6B7280" }}>
-                        {customer.phone}
-                      </div>
-                    </div>
-                  </div>
+                <div key={customer.id} className="hc-customer-card">
+                  {customer.photoUrl ? (
+                    <img src={customer.photoUrl} alt={customer.name} className="hc-avatar photo" />
+                  ) : (
+                    <div className="hc-avatar">{initials(customer.name)}</div>
+                  )}
 
-                  <div
-                    style={{
-                      display: "inline-block",
-                      padding: "5px 12px",
-                      borderRadius: "999px",
-                      fontSize: "12.5px",
-                      fontWeight: 700,
-                      background: hasDue ? "#FEF2F2" : "#F0FDF4",
-                      color: hasDue ? "#DC2626" : "#16A34A",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    {hasDue ? `Due ৳${customer.due}` : "Paid"}
+                  <div className="hc-info">
+                    <div className="hc-name">{customer.name}</div>
+                    <div className="hc-phone">{customer.phone}</div>
+                    <span className={`hc-badge ${hasDue ? "due" : "paid"}`}>
+                      {hasDue ? `Due ৳${customer.due}` : "Paid"}
+                    </span>
                   </div>
 
                   <button
                     onClick={() => navigate(`/customer/${customer.id}`)}
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      borderRadius: "10px",
-                      border: "none",
-                      background: "#111827",
-                      color: "#fff",
-                      fontSize: "13.5px",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
+                    className="hc-details-btn"
                   >
-                    View Details
+                    Details
                   </button>
                 </div>
               );
             })}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
