@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import BottomNavigation from "../components/BottomNavigation";
 
 function ShopProfile() {
   const { user } = useContext(AuthContext);
@@ -87,9 +88,13 @@ function ShopProfile() {
           overflow-x: hidden;
           background: var(--bg);
           font-family: system-ui, -apple-system, sans-serif;
-          padding: 16px 12px 32px;
+          padding: 16px 12px 120px;
         }
-        @media (min-width: 640px) { .sp-root { padding: 24px 20px 40px; } }
+        @media (min-width: 640px) {
+  .sp-root {
+    padding: 24px 20px 140px;
+  }
+}
 
         .sp-wrap { max-width: 620px; margin: 0 auto; }
 
@@ -252,6 +257,7 @@ function ShopProfile() {
           )}
         </div>
       </div>
+          <BottomNavigation />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase";
+import BottomNavigation from "../components/BottomNavigation";
 import {
   collection,
   doc,
@@ -124,7 +125,7 @@ function StaffManagement() {
         minHeight: "100vh",
         background: "#F3F4F6",
         fontFamily: "system-ui, -apple-system, sans-serif",
-        padding: "32px 20px",
+        padding: "32px 20px 120px",
       }}
     >
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -134,8 +135,25 @@ function StaffManagement() {
             Staff Management
           </h1>
           <p style={{ margin: "6px 0 0", color: "#6B7280", fontSize: "14px" }}>
-            Manage who has access to your shop and their roles
-          </p>
+  Manage who has access to your shop and their roles
+</p>
+
+<div
+  style={{
+    marginTop: "14px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    background: "#FEF3C7",
+    color: "#92400E",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    fontSize: "13px",
+    fontWeight: "700",
+  }}
+>
+  🚧 Coming Soon
+</div>
         </div>
 
         {/* Add / Edit Staff card */}
@@ -311,6 +329,7 @@ function StaffManagement() {
           </div>
         )}
       </div>
+          <BottomNavigation />
     </div>
   );
 }

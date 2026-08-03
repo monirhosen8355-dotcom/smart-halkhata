@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
+import { IoPower } from "react-icons/io5";
 import {
   doc,
   getDoc,
@@ -13,7 +14,6 @@ import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
 import overviewIcon from "../assets/icons/overview.svg";
 import staffIcon from "../assets/icons/staff.svg";
-import logoutIcon from "../assets/icons/logout.svg";
 
 import customersIcon from "../assets/icons/customers.svg";
 import shopIcon from "../assets/icons/shop.svg";
@@ -322,7 +322,7 @@ const loadDashboardStats = async () => {
     alt={card.title}
     style={{
       width: "48px",
-height: "48px",
+      height: "48px",
       objectFit: "contain",
     }}
   />
@@ -341,14 +341,9 @@ height: "48px",
             onMouseLeave={() => setPressedKey(null)}
           >
             <div className="hd-tile-icon">
-  <img
-    src={logoutIcon}
-    alt="Logout"
-    style={{
-      width: "34px",
-      height: "34px",
-      objectFit: "contain",
-    }}
+  <IoPower
+    size={48}
+    color="#EF4444"
   />
 </div>
             <div className="hd-tile-title">Logout</div>
