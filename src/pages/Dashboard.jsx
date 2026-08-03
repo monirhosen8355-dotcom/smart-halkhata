@@ -14,10 +14,12 @@ import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
 import overviewIcon from "../assets/icons/overview.svg";
 import staffIcon from "../assets/icons/staff.svg";
+import reportsIcon from "../assets/icons/reports.svg";
 
 import customersIcon from "../assets/icons/customers.svg";
 import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
+import notificationIcon from "../assets/icons/notification.svg";
 
 const NAV_CARDS = [
   {
@@ -33,11 +35,17 @@ const NAV_CARDS = [
     path: "/shop-profile",
   },
   {
-    key: "settings",
-    title: "Settings",
-    icon: settingsIcon,
-    path: "/settings",
-  },
+  key: "settings",
+  title: "Settings",
+  icon: settingsIcon,
+  path: "/settings",
+},
+{
+  key: "notifications",
+  title: "Notification",
+  icon: notificationIcon,
+  path: "/notifications",
+},
   {
     key: "business-overview",
     title: "Overview",
@@ -45,11 +53,17 @@ const NAV_CARDS = [
     path: "/business-overview",
   },
   {
-    key: "staff-management",
-    title: "Staff",
-    icon: staffIcon,
-    path: "/staff-management",
-  },
+  key: "staff-management",
+  title: "Staff",
+  icon: staffIcon,
+  path: "/staff-management",
+},
+{
+  key: "reports",
+  title: "Reports",
+  icon: reportsIcon,
+  path: "/reports",
+},
 ];
 
 function Dashboard() {

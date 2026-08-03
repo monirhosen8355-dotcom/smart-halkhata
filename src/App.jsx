@@ -9,11 +9,15 @@ import StaffManagement from "./pages/StaffManagement";
 import ShopProfile from "./pages/ShopProfile";
 import Settings from "./pages/Settings";
 import BusinessOverview from "./pages/BusinessOverview";
+import Reports from "./pages/Reports";
+import ReportDetails from "./pages/ReportDetails";
+import FloatingReportButton from "./components/FloatingReportButton";
 
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
+import Notifications from "./pages/Notifications";
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -67,13 +71,31 @@ function App() {
   path="/business-overview"
   element={<BusinessOverview />}
 />
+
+<Route
+  path="/reports"
+  element={<Reports />}
+/>
+
+<Route
+  path="/notifications"
+  element={<Notifications />}
+/>
+
+<Route
+  path="/report-details/:id"
+  element={<ReportDetails />}
+/>
 <Route
   path="/staff-management"
   element={<StaffManagement />}
 />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+   {user && window.location.pathname.startsWith("/customer") && (
+  <FloatingReportButton />
+)}
+</BrowserRouter>
   );
 }
 

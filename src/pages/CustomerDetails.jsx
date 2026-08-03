@@ -345,7 +345,36 @@ const [sortBy, setSortBy] = useState("newest");
     }
   };
 
-  const handleAddDue = async () => {
+  const sendCustomerNotification = async (
+  type,
+  amount,
+  totalDue
+) => {
+  await addDoc(
+    collection(db, "notifications"),
+    {
+      customerId: customer.id,
+      shopId: user.uid,
+      shopName: profile.shopName,
+
+      type,
+      amount,
+      totalDue,
+
+      title: "Smart Halkhata",
+
+      message:
+        type === "due"
+          ? `${profile.shopName} এ আপনার নামে ৳${amount} টাকা বাকি লেখা হয়েছে।`
+          : `${profile.shopName} এ আপনার ৳${amount} টাকা জমা হয়েছে।`,
+
+      createdAt: serverTimestamp(),
+      isRead: false,
+    }
+  );
+};
+
+const handleAddDue = async () => {
     if (!amount || Number(amount) <= 0) return;
 
     const customerRef = doc(db, "shops", user.uid, "customers", id);
