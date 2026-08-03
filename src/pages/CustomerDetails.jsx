@@ -836,7 +836,7 @@ return matchSearch && matchFilter && matchDate;
                 <div key={transaction.id} className="cd-txn-card" onClick={() => setSelectedTransaction(transaction)}>
                   <div className="cd-txn-top">
                     <div>
-                      <div className="cd-txn-type">{isPayment ? "💰 Payment Received" : "➕  Unpaid Balance"}</div>
+                      <div className="cd-txn-type">{isPayment ? "💰 Payment Received" : "➕  ADuedded"}</div>
                       <div className="cd-txn-datetime">{dateInfo?.date} • {dateInfo?.time?.slice(0, 5)}</div>
                     </div>
                     <div className={`cd-txn-amount ${isPayment ? "in" : "out"}`}>

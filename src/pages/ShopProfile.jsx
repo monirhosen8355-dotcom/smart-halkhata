@@ -77,92 +77,89 @@ function ShopProfile() {
 
   if (!user) return <h2 style={{ padding: "30px", fontFamily: "system-ui" }}>Loading...</h2>;
 
-  const cardBase = {
-    background: "#fff",
-    borderRadius: "16px",
-    border: "1px solid #E5E7EB",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-  };
-
-  const inputStyle = {
-    padding: "11px 14px",
-    borderRadius: "10px",
-    border: "1px solid #E5E7EB",
-    fontSize: "14px",
-    outline: "none",
-    width: "100%",
-    boxSizing: "border-box",
-  };
-
-  const labelStyle = {
-    fontSize: "12.5px",
-    fontWeight: 700,
-    color: "#6B7280",
-    marginBottom: "6px",
-    display: "block",
-  };
-
-  const primaryBtn = (bg, color = "#fff") => ({
-    padding: "11px 24px",
-    borderRadius: "10px",
-    border: "none",
-    background: bg,
-    color,
-    fontWeight: 700,
-    fontSize: "14px",
-    cursor: "pointer",
-  });
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#F3F4F6",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        padding: "32px 20px",
-      }}
-    >
-      <div style={{ maxWidth: "640px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ margin: 0, fontSize: "24px", color: "#111827" }}>
-            Shop Profile
-          </h1>
-          <p style={{ margin: "6px 0 0", color: "#6B7280", fontSize: "14px" }}>
-            This information appears on receipts and customer notifications
-          </p>
-        </div>
+    <div className="sp-root">
+      <style>{`
+        * { box-sizing: border-box; }
+        .sp-root {
+          min-height: 100vh;
+          width: 100%;
+          overflow-x: hidden;
+          background: #F3F4F6;
+          font-family: system-ui, -apple-system, sans-serif;
+          padding: 16px 12px 32px;
+        }
+        @media (min-width: 640px) { .sp-root { padding: 24px 20px 40px; } }
 
-        <div style={{ ...cardBase, padding: "32px" }}>
-          {/* Logo */}
-          <div style={{ textAlign: "center", marginBottom: "28px" }}>
+        .sp-wrap { max-width: 620px; margin: 0 auto; }
+
+        .sp-title { margin: 0; font-size: 22px; color: #111827; }
+        @media (min-width: 640px) { .sp-title { font-size: 26px; } }
+        .sp-subtitle { margin: 4px 0 16px; color: #6B7280; font-size: 12.5px; }
+        @media (min-width: 640px) { .sp-subtitle { font-size: 14px; margin-bottom: 22px; } }
+
+        .sp-card {
+          background: #fff;
+          border-radius: 16px;
+          border: 1px solid #E5E7EB;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+          padding: 20px 16px;
+        }
+        @media (min-width: 640px) { .sp-card { padding: 32px; } }
+
+        .sp-logo-wrap { text-align: center; margin-bottom: 22px; }
+        .sp-logo {
+          width: 84px; height: 84px; border-radius: 18px;
+          object-fit: cover; border: 1px solid #E5E7EB;
+        }
+        @media (min-width: 640px) { .sp-logo { width: 110px; height: 110px; border-radius: 20px; } }
+        .sp-logo-fallback {
+          width: 84px; height: 84px; border-radius: 18px;
+          background: #EFF6FF; color: #2563EB;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 28px; font-weight: 700; margin: 0 auto;
+        }
+        @media (min-width: 640px) {
+          .sp-logo-fallback { width: 110px; height: 110px; border-radius: 20px; font-size: 34px; }
+        }
+
+        .sp-label {
+          font-size: 11.5px; font-weight: 700; color: #6B7280;
+          margin-bottom: 5px; display: block;
+        }
+        .sp-input {
+          padding: 11px 13px; border-radius: 10px; border: 1px solid #E5E7EB;
+          font-size: 13.5px; outline: none; width: 100%;
+        }
+        .sp-field { margin-bottom: 14px; }
+
+        .sp-btn {
+          padding: 12px; border-radius: 10px; border: none; color: #fff;
+          font-weight: 700; font-size: 14px; cursor: pointer; flex: 1;
+        }
+        .sp-btn.outline { background: #F3F4F6; color: #374151; }
+        .sp-btn-row { display: flex; gap: 10px; }
+
+        .sp-view-row {
+          display: flex; justify-content: space-between; align-items: center;
+          padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #F3F4F6;
+          gap: 8px; flex-wrap: wrap;
+        }
+        .sp-view-row:last-of-type { border-bottom: none; margin-bottom: 20px; }
+        .sp-view-label { font-size: 12.5px; font-weight: 700; color: #6B7280; }
+        .sp-view-value { font-size: 13.5px; color: #111827; font-weight: 600; word-break: break-word; text-align: right; }
+      `}</style>
+
+      <div className="sp-wrap">
+        <h1 className="sp-title">Shop Profile</h1>
+        <p className="sp-subtitle">This information appears on receipts and customer notifications</p>
+
+        <div className="sp-card">
+          <div className="sp-logo-wrap">
             {profile.logoUrl ? (
-              <img
-                src={profile.logoUrl}
-                alt="Shop logo"
-                style={{
-                  width: "110px",
-                  height: "110px",
-                  borderRadius: "20px",
-                  objectFit: "cover",
-                  border: "1px solid #E5E7EB",
-                }}
-              />
+              <img src={profile.logoUrl} alt="Shop logo" className="sp-logo" />
             ) : (
-              <div
-                style={{
-                  width: "110px",
-                  height: "110px",
-                  borderRadius: "20px",
-                  background: "#EFF6FF",
-                  color: "#2563EB",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "34px",
-                  fontWeight: 700,
-                  margin: "0 auto",
-                }}
-              >
+              <div className="sp-logo-fallback">
                 {(profile.shopName || "S").charAt(0).toUpperCase()}
               </div>
             )}
@@ -170,119 +167,85 @@ function ShopProfile() {
 
           {isEditing ? (
             <div>
-              <div style={{ marginBottom: "18px" }}>
-                <label style={labelStyle}>Shop Name</label>
+              <div className="sp-field">
+                <label className="sp-label">Shop Name</label>
                 <input
                   placeholder="Shop Name"
                   value={profile.shopName}
                   onChange={(e) => setProfile({ ...profile, shopName: e.target.value })}
-                  style={inputStyle}
+                  className="sp-input"
                 />
               </div>
 
-              <div style={{ marginBottom: "18px" }}>
-                <label style={labelStyle}>Owner Name</label>
+              <div className="sp-field">
+                <label className="sp-label">Owner Name</label>
                 <input
                   placeholder="Owner Name"
                   value={profile.ownerName}
                   onChange={(e) => setProfile({ ...profile, ownerName: e.target.value })}
-                  style={inputStyle}
+                  className="sp-input"
                 />
               </div>
 
-              <div style={{ marginBottom: "18px" }}>
-                <label style={labelStyle}>Phone</label>
+              <div className="sp-field">
+                <label className="sp-label">Phone</label>
                 <input
                   placeholder="Phone"
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  style={inputStyle}
+                  className="sp-input"
                 />
               </div>
 
-              <div style={{ marginBottom: "18px" }}>
-                <label style={labelStyle}>Address</label>
+              <div className="sp-field">
+                <label className="sp-label">Address</label>
                 <input
                   placeholder="Address"
                   value={profile.address}
                   onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                  style={inputStyle}
+                  className="sp-input"
                 />
               </div>
 
-              <div style={{ marginBottom: "24px" }}>
-                <label style={labelStyle}>Shop Logo</label>
+              <div className="sp-field">
+                <label className="sp-label">Shop Logo</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => setLogoFile(e.target.files[0])}
-                  style={{ fontSize: "13px" }}
+                  style={{ fontSize: "12.5px" }}
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "10px" }}>
+              <div className="sp-btn-row">
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  style={{
-                    ...primaryBtn("#2563EB"),
-                    flex: 1,
-                    opacity: saving ? 0.6 : 1,
-                    cursor: saving ? "not-allowed" : "pointer",
-                  }}
+                  className="sp-btn"
+                  style={{ background: "#2563EB", opacity: saving ? 0.6 : 1, cursor: saving ? "not-allowed" : "pointer" }}
                 >
                   {saving ? "Saving..." : "Save"}
                 </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  style={{ ...primaryBtn("#F3F4F6", "#374151"), flex: 1 }}
-                >
+                <button onClick={() => setIsEditing(false)} className="sp-btn outline">
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
             <div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "16px",
-                  marginBottom: "24px",
-                }}
-              >
-                {[
-                  ["Shop Name", profile.shopName],
-                  ["Owner Name", profile.ownerName],
-                  ["Phone", profile.phone],
-                  ["Address", profile.address],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      paddingBottom: "12px",
-                      borderBottom: "1px solid #F3F4F6",
-                      flexWrap: "wrap",
-                      gap: "4px",
-                    }}
-                  >
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#6B7280" }}>
-                      {label}
-                    </span>
-                    <span style={{ fontSize: "14.5px", color: "#111827", fontWeight: 600 }}>
-                      {value || "—"}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {[
+                ["Shop Name", profile.shopName],
+                ["Owner Name", profile.ownerName],
+                ["Phone", profile.phone],
+                ["Address", profile.address],
+              ].map(([label, value]) => (
+                <div key={label} className="sp-view-row">
+                  <span className="sp-view-label">{label}</span>
+                  <span className="sp-view-value">{value || "—"}</span>
+                </div>
+              ))}
 
-              <button
-                onClick={() => setIsEditing(true)}
-                style={{ ...primaryBtn("#111827"), width: "100%" }}
-              >
+              <button onClick={() => setIsEditing(true)} className="sp-btn" style={{ background: "#111827", width: "100%" }}>
                 Edit Shop Profile
               </button>
             </div>

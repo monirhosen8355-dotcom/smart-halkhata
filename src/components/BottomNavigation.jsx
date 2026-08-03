@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import AddCustomerModal from "./AddCustomerModal";
 import {
   FiHome,
   FiUsers,
@@ -7,12 +8,13 @@ import {
   FiSettings,
   FiPlus,
 } from "react-icons/fi";
-
-function BottomNavigation() {
+function BottomNavigation({ onCustomerAdded }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [pressed, setPressed] = useState(null);
+const [showMenu, setShowMenu] = useState(false);
+const [showAddCustomer, setShowAddCustomer] = useState(false);
 
  const items = [
   {
@@ -146,9 +148,48 @@ function BottomNavigation() {
         margin-bottom:4px;
       }
       `}</style>
+    {showMenu && (
+  <div
+    style={{
+      position: "fixed",
+      bottom: "90px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "260px",
+      background: "#fff",
+      borderRadius: "18px",
+      boxShadow: "0 15px 40px rgba(0,0,0,.18)",
+      overflow: "hidden",
+      zIndex: 99999,
+    }}
+  >
+    <div
+      onClick={() => {
+        setShowMenu(false);
+        setShowAddCustomer(true);
+      }}
+      style={{
+        padding: "16px",
+        cursor: "pointer",
+        borderBottom: "1px solid #eee",
+        fontWeight: 600,
+      }}
+    >
+      👤 Add Customer
+    </div>
 
-      <div className="bn-root">
-        <div className="bn-wrapper">
+  </div>
+)}
+<AddCustomerModal
+  open={showAddCustomer}
+  onClose={() => setShowAddCustomer(false)}
+  onSuccess={() => {
+    onCustomerAdded?.();
+  }}
+/>
+
+<div className="bn-root">
+  <div className="bn-wrapper">
 
           {items.map((item)=>{
 
@@ -168,10 +209,11 @@ function BottomNavigation() {
 
                 onClick={() => {
   if (item.fab) {
-    alert("Coming Soon");
+    setShowMenu(!showMenu);
     return;
   }
 
+  setShowMenu(false);
   navigate(item.path);
 }}
 

@@ -380,23 +380,6 @@ createdDate: new Date().toISOString().split("T")[0],
           </div>
         </div>
 
-        {/* Due Reminders */}
-        {reminders.length > 0 && (
-          <div className="hc-card">
-            <div className="hc-card-title">🔔 Due Reminders</div>
-            {reminders.map((r) => (
-              <div key={r.id} className="hc-reminder-row" style={{ opacity: r.read ? 0.5 : 1 }}>
-                <span className="hc-reminder-text">{r.customerName} — Due ৳{r.due}</span>
-                {!r.read && (
-                  <button onClick={() => markReminderRead(r.id)} className="hc-reminder-btn">
-                    Mark as Read
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Search / Filter / Sort */}
         <div className="hc-card">
           <input
@@ -471,7 +454,7 @@ createdDate: new Date().toISOString().split("T")[0],
         )}
             </div>
 
-      <BottomNavigation />
+      <BottomNavigation onCustomerAdded={loadCustomers} />
     </div>
   );
 }
