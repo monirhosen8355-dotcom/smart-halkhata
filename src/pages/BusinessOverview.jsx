@@ -103,7 +103,7 @@ setLastUpdated(
     <div
       style={{
         minHeight: "100vh",
-        background: "#F3F4F6",
+        background: "var(--bg)",
         padding: "20px",
 paddingBottom: "110px",
 fontFamily: "system-ui",
@@ -124,7 +124,7 @@ fontFamily: "system-ui",
 
     <div
       style={{
-        color: "#6B7280",
+        color: "var(--text)",
         fontSize: "13px",
         marginTop: "5px",
       }}
@@ -192,13 +192,13 @@ function Card({ title, value }) {
   return (
     <div
       style={{
-        background: "#fff",
+        background: "var(--card)",
         padding: "20px",
         borderRadius: "16px",
         boxShadow: "0 2px 8px rgba(0,0,0,.08)",
       }}
     >
-      <div style={{ color: "#6B7280", fontSize: "14px" }}>{title}</div>
+      <div style={{ color: "var(--text)", fontSize: "14px" }}>{title}</div>
 
       <h2
   style={{

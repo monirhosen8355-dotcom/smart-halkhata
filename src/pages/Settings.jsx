@@ -75,6 +75,10 @@ function Settings() {
   };
 
   const handleSave = async () => {
+    document.documentElement.setAttribute(
+  "data-theme",
+  settings.darkMode ? "dark" : "light"
+);
     setSaving(true);
 
     try {
@@ -107,7 +111,7 @@ function Settings() {
     width: "100%",
     boxSizing: "border-box",
     background: "#fff",
-    color: "#111827",
+    color: "var(--text)",
   };
 
   const sectionRow = {
@@ -132,7 +136,7 @@ function Settings() {
   const labelBlock = (title, desc) => (
     <div style={{ minWidth: "180px" }}>
       <div style={{ fontSize: "14.5px", fontWeight: 700, color: "#111827" }}>{title}</div>
-      <div style={{ fontSize: "12.5px", color: "#6B7280", marginTop: "3px" }}>{desc}</div>
+      <div style={{ fontSize: "12.5px", color: "var(--text)",marginTop: "3px" }}>{desc}</div>
     </div>
   );
 
@@ -140,7 +144,7 @@ function Settings() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#F3F4F6",
+        background: "var(--bg)",
         fontFamily: "system-ui, -apple-system, sans-serif",
         padding: "32px 20px 120px",
       }}
@@ -181,7 +185,7 @@ function Settings() {
                   width: "22px",
                   height: "22px",
                   borderRadius: "50%",
-                  background: "#fff",
+                  background: "var(--card)",
                   position: "absolute",
                   top: "3px",
                   left: settings.darkMode ? "25px" : "3px",

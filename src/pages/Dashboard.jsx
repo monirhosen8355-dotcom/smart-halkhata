@@ -11,13 +11,45 @@ import {
 import { db } from "../firebase";
 import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
+import overviewIcon from "../assets/icons/overview.svg";
+import staffIcon from "../assets/icons/staff.svg";
+import logoutIcon from "../assets/icons/logout.svg";
+
+import customersIcon from "../assets/icons/customers.svg";
+import shopIcon from "../assets/icons/shop.svg";
+import settingsIcon from "../assets/icons/settings.svg";
 
 const NAV_CARDS = [
-  { key: "customers", title: "Customers", icon: "👥", path: "/customers" },
-  { key: "shop-profile", title: "Shop Profile", icon: "🏬", path: "/shop-profile" },
-  { key: "settings", title: "Settings", icon: "⚙️", path: "/settings" },
-  { key: "business-overview", title: "Overview", icon: "📊", path: "/business-overview" },
-{ key: "staff-management", title: "Staff", icon: "🧑‍💼", path: "/staff-management" },
+  {
+    key: "customers",
+    title: "Customers",
+   icon: customersIcon,
+    path: "/customers",
+  },
+  {
+    key: "shop-profile",
+    title: "Shop Profile",
+    icon: shopIcon,
+    path: "/shop-profile",
+  },
+  {
+    key: "settings",
+    title: "Settings",
+    icon: settingsIcon,
+    path: "/settings",
+  },
+  {
+    key: "business-overview",
+    title: "Overview",
+    icon: overviewIcon,
+    path: "/business-overview",
+  },
+  {
+    key: "staff-management",
+    title: "Staff",
+    icon: staffIcon,
+    path: "/staff-management",
+  },
 ];
 
 function Dashboard() {
@@ -80,7 +112,7 @@ const loadDashboardStats = async () => {
         .hd-root {
           min-height: 100vh;
           width: 100%;
-          background: #F3F4F6;
+          background: var(--bg);
           font-family: system-ui, -apple-system, sans-serif;
         }
 
@@ -142,10 +174,11 @@ const loadDashboardStats = async () => {
 
         /* ===== Feature grid ===== */
         .hd-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-        }
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 28px 18px;
+  margin-top: 25px;
+}
         @media (min-width: 640px) {
           .hd-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
         }
@@ -154,39 +187,41 @@ const loadDashboardStats = async () => {
         }
 
         .hd-tile {
-          aspect-ratio: 1 / 1;
-          background: #fff;
-          border-radius: 16px;
-          border: 1px solid #E5E7EB;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          cursor: pointer;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-          user-select: none;
-        }
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.hd-tile:hover{
+  transform: translateY(-2px);
+}
         .hd-tile:active,
         .hd-tile.pressed {
           transform: scale(0.95);
           box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
-        .hd-tile-icon {
-          font-size: 26px;
-          width: 46px; height: 46px;
-          border-radius: 12px;
-          background: #EFF6FF;
-          display: flex; align-items: center; justify-content: center;
-        }
+        .hd-tile-icon{
+  width:64px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
         @media (min-width: 640px) {
           .hd-tile-icon { font-size: 30px; width: 54px; height: 54px; }
         }
         .hd-tile-title {
           font-size: 12px;
           font-weight: 700;
-          color: #111827;
+          color: var(--text);
           text-align: center;
         }
         @media (min-width: 640px) { .hd-tile-title { font-size: 13.5px; } }
@@ -216,7 +251,7 @@ const loadDashboardStats = async () => {
 
 <div
   style={{
-    background: "#fff",
+    background: "var(--card)",
     borderRadius: "16px",
     padding: "18px",
     marginBottom: "18px",
@@ -230,7 +265,7 @@ const loadDashboardStats = async () => {
     <div
       style={{
         fontSize: "13px",
-        color: "#6B7280",
+        color: "var(--text)",
       }}
     >
       Total Due
@@ -281,7 +316,17 @@ const loadDashboardStats = async () => {
               onMouseUp={() => setPressedKey(null)}
               onMouseLeave={() => setPressedKey(null)}
             >
-              <div className="hd-tile-icon">{card.icon}</div>
+              <div className="hd-tile-icon">
+  <img
+    src={card.icon}
+    alt={card.title}
+    style={{
+      width: "48px",
+height: "48px",
+      objectFit: "contain",
+    }}
+  />
+</div>
               <div className="hd-tile-title">{card.title}</div>
             </div>
           ))}
@@ -295,7 +340,17 @@ const loadDashboardStats = async () => {
             onMouseUp={() => setPressedKey(null)}
             onMouseLeave={() => setPressedKey(null)}
           >
-            <div className="hd-tile-icon">🚪</div>
+            <div className="hd-tile-icon">
+  <img
+    src={logoutIcon}
+    alt="Logout"
+    style={{
+      width: "34px",
+      height: "34px",
+      objectFit: "contain",
+    }}
+  />
+</div>
             <div className="hd-tile-title">Logout</div>
           </div>
         </div>

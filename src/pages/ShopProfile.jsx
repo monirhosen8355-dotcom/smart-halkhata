@@ -85,7 +85,7 @@ function ShopProfile() {
           min-height: 100vh;
           width: 100%;
           overflow-x: hidden;
-          background: #F3F4F6;
+          background: var(--bg);
           font-family: system-ui, -apple-system, sans-serif;
           padding: 16px 12px 32px;
         }
@@ -95,11 +95,11 @@ function ShopProfile() {
 
         .sp-title { margin: 0; font-size: 22px; color: #111827; }
         @media (min-width: 640px) { .sp-title { font-size: 26px; } }
-        .sp-subtitle { margin: 4px 0 16px; color: #6B7280; font-size: 12.5px; }
+        .sp-subtitle { margin: 4px 0 16px; color: var(--text); font-size: 12.5px; }
         @media (min-width: 640px) { .sp-subtitle { font-size: 14px; margin-bottom: 22px; } }
 
         .sp-card {
-          background: #fff;
+          background: var(--card);
           border-radius: 16px;
           border: 1px solid #E5E7EB;
           box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -147,7 +147,7 @@ function ShopProfile() {
         }
         .sp-view-row:last-of-type { border-bottom: none; margin-bottom: 20px; }
         .sp-view-label { font-size: 12.5px; font-weight: 700; color: #6B7280; }
-        .sp-view-value { font-size: 13.5px; color: #111827; font-weight: 600; word-break: break-word; text-align: right; }
+        .sp-view-value { font-size: 13.5px; color: var(--text); font-weight: 600; word-break: break-word; text-align: right; }
       `}</style>
 
       <div className="sp-wrap">

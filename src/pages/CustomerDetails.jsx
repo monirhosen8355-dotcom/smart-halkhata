@@ -431,7 +431,7 @@ createdDate: new Date().toISOString().split("T")[0],
           min-height: 100vh;
           width: 100%;
           overflow-x: hidden;
-          background: #F3F4F6;
+          background: var(--bg);
           font-family: system-ui, -apple-system, sans-serif;
           padding: 16px 12px 110px;
         }
@@ -440,7 +440,7 @@ createdDate: new Date().toISOString().split("T")[0],
         .cd-wrap { max-width: 720px; margin: 0 auto; }
 
         .cd-card {
-          background: #fff;
+          background: var(--card);
           border-radius: 16px;
           border: 1px solid #E5E7EB;
           box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -457,9 +457,9 @@ createdDate: new Date().toISOString().split("T")[0],
           font-weight: 700; font-size: 22px; flex-shrink: 0; object-fit: cover;
         }
         @media (min-width: 640px) { .cd-avatar { width: 76px; height: 76px; font-size: 28px; } }
-        .cd-name { margin: 0; font-size: 17px; color: #111827; }
+        .cd-name { margin: 0; font-size: 17px; color: var(--text); }
         @media (min-width: 640px) { .cd-name { font-size: 20px; } }
-        .cd-phone { margin: 3px 0 8px; color: #6B7280; font-size: 12.5px; }
+        .cd-phone { margin: 3px 0 8px; color: var(--text); font-size: 12.5px; }
         .cd-due-badge {
           display: inline-block; padding: 5px 14px; border-radius: 999px;
           font-size: 12.5px; font-weight: 700;
@@ -471,18 +471,18 @@ createdDate: new Date().toISOString().split("T")[0],
           padding: 11px 13px; border-radius: 10px; border: 1px solid #E5E7EB;
           font-size: 13.5px; outline: none; width: 100%;
         }
-        .cd-select { background: #fff; }
+        .cd-select { background: var(--card);}
 
         .cd-btn {
           padding: 12px; border-radius: 10px; border: none; color: #fff;
           font-weight: 700; font-size: 14px; cursor: pointer; width: 100%;
         }
         .cd-btn.small { padding: 9px 14px; font-size: 12.5px; width: auto; }
-        .cd-btn.outline { background: #fff; border: 1px solid #E5E7EB; color: #374151; }
-        .cd-btn.danger-outline { background: #fff; border: 1px solid #FCA5A5; color: #DC2626; }
+        .cd-btn.outline { background: var(--card); border: 1px solid #E5E7EB; color: var(--text); }
+        .cd-btn.danger-outline { background: var(--card); border: 1px solid #FCA5A5; color: #DC2626; }
 
         .cd-field-label {
-          font-size: 11.5px; font-weight: 700; color: #6B7280;
+          font-size: 11.5px; font-weight: 700; color: var(--text);
           margin-bottom: 5px; display: block;
         }
 
@@ -500,14 +500,14 @@ createdDate: new Date().toISOString().split("T")[0],
 
         .cd-txn-list { display: flex; flex-direction: column; gap: 10px; }
         .cd-txn-card {
-          background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+         background: var(--card); border-radius: 14px; border: 1px solid #E5E7EB;
           box-shadow: 0 2px 6px rgba(0,0,0,0.04);
           padding: 14px; cursor: pointer;
         }
         .cd-txn-top {
           display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
         }
-        .cd-txn-type { font-size: 14px; font-weight: 700; color: #111827; }
+        .cd-txn-type { font-size: 14px; font-weight: 700; color: var(--text); }
         .cd-txn-amount { font-size: 18px; font-weight: 800; white-space: nowrap; }
         .cd-txn-amount.in { color: #16A34A; }
         .cd-txn-amount.out { color: #DC2626; }
@@ -519,17 +519,17 @@ createdDate: new Date().toISOString().split("T")[0],
         }
         .cd-mini-badge.status { background: #F0FDF4; color: #16A34A; }
         .cd-mini-badge.method { background: #EFF6FF; color: #2563EB; }
-        .cd-txn-note { font-size: 12px; color: #6B7280; margin-top: 7px; }
+        .cd-txn-note { font-size: 12px; color: var(--text); margin-top: 7px; }
 
         .cd-empty { text-align: center; color: #9CA3AF; font-size: 13px; padding: 26px 16px; }
 
         .cd-modal-overlay {
-          position: fixed; inset: 0; background: rgba(17,24,39,0.55);
+          position: fixed; inset: 0; background: rgba(0,0,0,.65);
           display: flex; align-items: center; justify-content: center;
           z-index: 999; padding: 14px;
         }
         .cd-modal {
-          width: 100%; max-width: 400px; background: #fff; border-radius: 20px;
+          width: 100%; max-width: 400px; background: var(--card); border-radius: 20px;
           padding: 24px 20px; border: 1px solid #E5E7EB;
           box-shadow: 0 24px 60px rgba(0,0,0,0.25);
           max-height: 90vh; overflow-y: auto;
@@ -868,7 +868,7 @@ return matchSearch && matchFilter && matchDate;
                 }}>
                   {selectedTransaction.type === "payment" ? "✓" : "৳"}
                 </div>
-                <h2 style={{ margin: 0, fontSize: "18px", color: "#111827" }}>
+                <h2 style={{ margin: 0, fontSize: "18px", color: "var(--text)" }}>
                   {selectedTransaction.type === "payment" ? "Payment Received" : "Due Added"}
                 </h2>
               </div>
@@ -878,13 +878,13 @@ return matchSearch && matchFilter && matchDate;
                 return (
                   <>
                     <div style={{ textAlign: "center", marginBottom: "18px" }}>
-                      <div style={{ color: "#6B7280", fontSize: "12px", fontWeight: 600 }}>Amount</div>
-                      <div style={{ fontSize: "36px", fontWeight: 800, color: "#111827", margin: "3px 0" }}>
+                      <div style={{ color: "var(--text)", fontSize: "12px", fontWeight: 600 }}>Amount</div>
+                      <div style={{ fontSize: "36px", fontWeight: 800, color: "var(--text)", margin: "3px 0" }}>
                         ৳{selectedTransaction.amount}
                       </div>
                     </div>
 
-                    <div style={{ fontSize: "13px", color: "#374151", lineHeight: 1.9 }}>
+                    <div style={{ fontSize: "13px", color: "var(--text)", lineHeight: 1.9 }}>
                       <div>
                         <strong>Transaction ID:</strong>{" "}
                         <span

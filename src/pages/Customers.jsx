@@ -161,7 +161,7 @@ createdDate: new Date().toISOString().split("T")[0],
           min-height: 100vh;
           width: 100%;
           overflow-x: hidden;
-          background: #F3F4F6;
+          background: "var(--bg)",
           font-family: system-ui, -apple-system, sans-serif;
           padding: 16px 12px 32px;
         }
@@ -175,7 +175,7 @@ createdDate: new Date().toISOString().split("T")[0],
         @media (min-width: 640px) { .hc-subtitle { font-size: 14px; margin-bottom: 22px; } }
 
         .hc-card {
-          background: #fff;
+          background: "var(--card)",
           border-radius: 16px;
           border: 1px solid #E5E7EB;
           box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -185,7 +185,7 @@ createdDate: new Date().toISOString().split("T")[0],
         @media (min-width: 640px) { .hc-card { padding: 22px; margin-bottom: 20px; } }
 
         .hc-card-title {
-          font-size: 13.5px; font-weight: 700; color: #111827; margin-bottom: 12px;
+          font-size: 13.5px; font-weight: 700; color: "var(--text)", margin-bottom: 12px;
         }
 
         .hc-input {
@@ -278,7 +278,7 @@ createdDate: new Date().toISOString().split("T")[0],
         .hc-list-label {
           font-size: 12.5px;
           font-weight: 700;
-          color: #6B7280;
+          color: "var(--text)",
           margin: 4px 0 10px;
         }
 
