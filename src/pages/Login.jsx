@@ -214,40 +214,21 @@ function Login() {
         }
 
         /* ============ LEDGER BOOK (pure CSS) ============ */
-        .hl-ledger-stage {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 320px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+       .hl-ledger-stage{
+  position:absolute;
+  right:20px;
+  bottom:20px;
+  width:320px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 @media (max-width:900px){
   .hl-ledger-stage{
-    width:220px;
-    right:0;
-    bottom:0;
+    display:none;
   }
 }
-          position: absolute;
-          right: 8px;
-          bottom: -10px;
-          width: clamp(180px, 46vw, 220px);
-          height: clamp(180px, 46vw, 220px);
-          perspective: 1000px;
-        }
-        @media (min-width: 900px) {
-          .hl-ledger-stage {
-            right: 20px;
-            bottom: 40px;
-            width: clamp(260px, 22vw, 320px);
-            height: clamp(260px, 22vw, 320px);
-          }
-        }
-
-        .hl-ledger {
           position: relative;
           width: 100%;
           height: 78%;
@@ -339,17 +320,31 @@ function Login() {
         }
 
         /* ============ CARD AREA ============ */
-        .hl-card-area {
-          flex: 1;
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-          padding: 20px 16px 32px;
-          width: 100%;
-        }
-        @media (min-width: 900px) {
-          .hl-card-area { align-items: center; padding: 40px 24px; width: 54%; }
-        }
+        .hl-card-area{
+  flex:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:20px 16px 32px;
+  width:100%;
+  position:relative;
+}
+
+@media (max-width:900px){
+  .hl-card-area{
+    background:url("https://bonsure.co/load/img/ind2.png") no-repeat center bottom;
+    background-size:240px;
+  }
+}
+
+@media (min-width:900px){
+  .hl-card-area{
+    align-items:center;
+    padding:40px 24px;
+    width:54%;
+    background:none;
+  }
+}
 
         .hl-flip-perspective {
           width: 100%;
