@@ -1,5 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#7C3AED">
-  <rect x="3" y="11" width="3" height="10"/>
-  <rect x="10" y="7" width="3" height="14"/>
-  <rect x="17" y="3" width="3" height="18"/>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="150"
+     height="150"
+     viewBox="0 0 150 150"
+     fill="none">
+
+  <path
+    d="M75 20L135 125H15L75 20Z"
+    fill="#F59E0B"/>
+
+  <rect
+    x="69"
+    y="50"
+    width="12"
+    height="40"
+    rx="6"
+    fill="white"/>
+
+  <circle
+    cx="75"
+    cy="105"
+    r="6"
+    fill="white"/>
+
 </svg>
