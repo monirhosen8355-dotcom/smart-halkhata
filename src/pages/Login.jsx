@@ -215,6 +215,22 @@ function Login() {
 
         /* ============ LEDGER BOOK (pure CSS) ============ */
         .hl-ledger-stage {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width:900px){
+  .hl-ledger-stage{
+    width:220px;
+    right:0;
+    bottom:0;
+  }
+}
           position: absolute;
           right: 8px;
           bottom: -10px;
@@ -380,16 +396,17 @@ function Login() {
         </div>
 
         <div className="hl-ledger-stage">
-          <div className="hl-ledger">
-            <div className="hl-ledger-pages" />
-            <div className="hl-ledger-cover">
-              <div className="hl-gold-corner tl" />
-              <div className="hl-gold-corner br" />
-              <div className="hl-ledger-title" />
-            </div>
-            <div className={`hl-flip-page ${isBursting ? "burst" : ""}`} />
-          </div>
-        </div>
+  <img
+    src="https://bonsure.co/load/img/ind2.png"
+    alt="Smart Halkhata"
+    style={{
+      width: "100%",
+      maxWidth: "320px",
+      height: "auto",
+      objectFit: "contain",
+    }}
+  />
+</div>
       </div>
 
       {/* AUTH CARD */}
