@@ -335,7 +335,7 @@ function Login() {
   .hl-card-area::after{
     content:"";
     position:absolute;
-    left:-40px;
+    left:-10px;
     bottom:20px;
 
     width:240px;
