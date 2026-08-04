@@ -335,14 +335,14 @@ function Login() {
   .hl-card-area::after{
     content:"";
     position:absolute;
-    right:-40px;
+    left:-40px;
     bottom:20px;
 
     width:240px;
     height:340px;
 
     background:url("https://bonsure.co/load/img/ind2.png")
-    no-repeat center bottom;
+no-repeat left bottom;
 
     background-size:contain;
 
