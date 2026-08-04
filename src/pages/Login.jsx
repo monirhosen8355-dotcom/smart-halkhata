@@ -323,30 +323,50 @@ function Login() {
         .hl-card-area{
   flex:1;
   display:flex;
-  align-items:flex-start;
   justify-content:center;
-  padding:20px 16px 32px;
+  align-items:flex-start;
+  padding:20px 16px 40px;
   width:100%;
   position:relative;
 }
 
 @media (max-width:900px){
-  .hl-card-area{
-    background:url("https://bonsure.co/load/img/ind2.png") no-repeat center bottom;
-    background-size:240px;
+
+  .hl-card-area::after{
+    content:"";
+    position:absolute;
+    right:-40px;
+    bottom:20px;
+
+    width:240px;
+    height:340px;
+
+    background:url("https://bonsure.co/load/img/ind2.png")
+    no-repeat center bottom;
+
+    background-size:contain;
+
+    opacity:.22;
+
+    pointer-events:none;
+
+    z-index:0;
   }
 }
 
 @media (min-width:900px){
+
   .hl-card-area{
+    width:54%;
     align-items:center;
     padding:40px 24px;
-    width:54%;
-    background:none;
   }
-}
 
-        .hl-flip-perspective {
+  .hl-card-area::after{
+    display:none;
+  }
+
+}
           width: 100%;
           max-width: 400px;
           perspective: 1400px;
@@ -410,8 +430,28 @@ function Login() {
           <div className={`hl-flip-card ${mode === "signup" ? "is-signup" : ""}`}>
 
             {/* LOGIN FACE */}
-            <div className="hl-face">
-              <h2 style={{ margin: 0, fontSize: "20px", color: "#111827" }}>Welcome back</h2>
+            <div
+className="hl-face"
+style={{
+position:"relative",
+zIndex:2,
+}}
+  style={{
+    position: "relative",
+    overflow: "hidden",
+  }}
+>
+              <h2
+  style={{
+    margin: 0,
+    fontSize: "20px",
+    color: "#111827",
+    position: "relative",
+    zIndex: 1,
+  }}
+>
+  Welcome back
+</h2>
               <p style={{ margin: "6px 0 18px", fontSize: "13px", color: "#6B7280" }}>
                 Sign in to your shop account to continue
               </p>
@@ -469,8 +509,38 @@ function Login() {
             </div>
 
             {/* SIGNUP FACE */}
-            <div className="hl-face hl-face-back">
-              <h2 style={{ margin: 0, fontSize: "20px", color: "#111827" }}>Create your account</h2>
+            <div
+  className="hl-face hl-face-back"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+  }}
+>
+              <img
+  src="https://bonsure.co/load/img/ind2.png"
+  alt=""
+  style={{
+    position: "absolute",
+    bottom: 0,
+    right: -20,
+    width: "170px",
+    opacity: 0.12,
+    pointerEvents: "none",
+    zIndex: 0,
+  }}
+/>
+
+<h2
+  style={{
+    margin: 0,
+    fontSize: "20px",
+    color: "#111827",
+    position: "relative",
+    zIndex: 1,
+  }}
+>
+  Create your account
+</h2>
               <p style={{ margin: "6px 0 14px", fontSize: "13px", color: "#6B7280" }}>
                 Set up your shop in a few seconds
               </p>
