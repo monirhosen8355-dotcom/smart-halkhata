@@ -89,13 +89,17 @@ function StaffManagement() {
   if (!user) return <h2 style={{ padding: "30px", fontFamily: "system-ui" }}>Loading...</h2>;
 
   const cardBase = {
-    background: "#fff",
+background: "var(--card)",
     borderRadius: "16px",
     border: "1px solid #E5E7EB",
     boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
   };
 
   const inputStyle = {
+    border: "1px solid #E5E7EB",
+fontSize: "14px",
+background: "var(--card)",
+color: "var(--text)",
     padding: "11px 14px",
     borderRadius: "10px",
     border: "1px solid #E5E7EB",
@@ -123,7 +127,7 @@ function StaffManagement() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#F3F4F6",
+        background: "var(--bg)",
         fontFamily: "system-ui, -apple-system, sans-serif",
         padding: "32px 20px 120px",
       }}
@@ -158,7 +162,7 @@ function StaffManagement() {
 
         {/* Add / Edit Staff card */}
         <div style={{ ...cardBase, padding: "24px", marginBottom: "24px" }}>
-          <div style={{ fontSize: "16px", fontWeight: 700, color: "#111827", marginBottom: "16px" }}>
+          <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--text)", marginBottom: "16px" }}>
             {editingId ? "✏️ Edit Staff" : "+ Add New Staff"}
           </div>
 
@@ -185,7 +189,11 @@ function StaffManagement() {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              style={{ ...inputStyle, background: "#fff" }}
+              style={{
+  ...inputStyle,
+  background: "var(--card)",
+  color: "var(--text)",
+}}
             >
               <option value="staff">Staff</option>
               <option value="admin">Admin</option>

@@ -71,8 +71,18 @@ function Dashboard() {
   const { user, loading, logout } = useContext(AuthContext);
 const { t } = useLanguage();
   const navigate = useNavigate();
-  const [pressedKey, setPressedKey] = useState(null);
+const [pressedKey, setPressedKey] = useState(null);
+const [showBalance, setShowBalance] = useState(false);
 
+useEffect(() => {
+  if (!showBalance) return;
+
+  const timer = setTimeout(() => {
+    setShowBalance(false);
+  }, 4000);
+
+  return () => clearTimeout(timer);
+}, [showBalance]);
 const [totalCustomers, setTotalCustomers] = useState(0);
 const [totalDue, setTotalDue] = useState(0);
 
@@ -244,83 +254,65 @@ const loadDashboardStats = async () => {
 
         .hd-tile.logout .hd-tile-icon { background: #FEF2F2; }
         .hd-tile.logout .hd-tile-title { color: #DC2626; }
+              @keyframes fadeIn{
+          from{
+            opacity:0;
+            transform:translateX(-15px);
+          }
+          to{
+            opacity:1;
+            transform:translateX(0);
+          }
+        }
       `}</style>
 
       <div className="hd-header">
-        <div className="hd-header-row">
-          <div>
-            <div className="hd-brand">Smart Halkhata</div>
-            <div className="hd-brand-sub">{t("dashboard")}</div>
-          </div>
-
-          <div className="hd-profile">
-            <div className="hd-avatar">{(user.email || "?").charAt(0).toUpperCase()}</div>
-            <div className="hd-email">{user.email}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="hd-body">
-        <p className="hd-welcome">
-  {t("welcomeBack")} 👋
-</p>
-
-<div
-  style={{
-    background: "var(--card)",
-    borderRadius: "16px",
-    padding: "18px",
-    marginBottom: "18px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 2px 8px rgba(0,0,0,.08)",
-  }}
->
+       <div className="hd-header-row">
   <div>
-    <div
-      style={{
-        fontSize: "13px",
-        color: "var(--text)",
-      }}
-    >
-      {t("totalDue")}
-    </div>
-
-    <div
-      style={{
-        fontSize: "28px",
-        fontWeight: "800",
-        color: "#DC2626",
-      }}
-    >
-      ৳{totalDue.toLocaleString()}
-    </div>
+    <div className="hd-brand">Smart Halkhata</div>
+    <div className="hd-brand-sub">{t("dashboard")}</div>
   </div>
 
-  <div style={{ textAlign: "right" }}>
-    <div
+  <div
+    onClick={() => setShowBalance(!showBalance)}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      background: "rgba(255,255,255,.12)",
+      padding: "8px 14px",
+      borderRadius: "999px",
+      cursor: "pointer",
+      transition: ".35s",
+      width: showBalance ? "170px" : "120px",
+      overflow: "hidden",
+    }}
+  >
+    <span style={{ color: "#fff", fontSize: "13px" }}>👁</span>
+
+    <span
       style={{
-        fontSize: "13px",
-        color: "#6B7280",
+        color: "#fff",
+        fontWeight: "700",
+        whiteSpace: "nowrap",
       }}
     >
-      {t("totalCustomers")}
+      {showBalance ? `৳${totalDue.toLocaleString()}` : "মোট বাকি"}
+    </span>
+  </div>
+
+  <div className="hd-profile">
+    <div className="hd-avatar">
+      {(user.email || "?").charAt(0).toUpperCase()}
     </div>
 
-    <div
-      style={{
-        fontSize: "28px",
-        fontWeight: "800",
-        color: "#16A34A",
-      }}
-    >
-      {totalCustomers}
-    </div>
+    <div className="hd-email">{user.email}</div>
   </div>
 </div>
+      </div>
 
-        <div className="hd-grid">
+     <div className="hd-body">
+<div className="hd-grid">
           {getNavCards(t).map((card) => (
             <div
               key={card.key}

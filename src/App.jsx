@@ -13,7 +13,7 @@ import BusinessOverview from "./pages/BusinessOverview";
 import ChangePassword from "./pages/ChangePassword";
 import Reports from "./pages/Reports";
 import ReportDetails from "./pages/ReportDetails";
-import FloatingReportButton from "./components/FloatingReportButton";
+
 
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -100,9 +100,7 @@ function App() {
 />
         <Route path="*" element={<NotFound />} />
       </Routes>
-   {user && window.location.pathname.startsWith("/customer") && (
-  <FloatingReportButton />
-)}
+  
   </LanguageProvider>
 </BrowserRouter>
   );

@@ -93,6 +93,8 @@ code {
   --bg: #F3F4F6;
   --card: #ffffff;
   --text: #111827;
+  --text-h: #111827;
+  --border: #E5E7EB;
 }
 
 :root[data-theme="dark"] {
@@ -107,4 +109,11 @@ body {
   background: var(--bg);
   color: var(--text);
   transition: background .25s, color .25s;
+}
+
+*{
+  transition:
+    background-color .25s,
+    color .25s,
+    border-color .25s;
 }
