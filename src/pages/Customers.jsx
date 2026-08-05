@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { db } from "../firebase";
 import { logActivity } from "../utils/logActivity";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ function Customers() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const { user } = useContext(AuthContext);
+const { t } = useLanguage();
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -353,16 +355,18 @@ createdDate: new Date().toISOString().split("T")[0],
       `}</style>
 
       <div className="hc-wrap">
-        <h1 className="hc-title">Customers</h1>
+        <h1 className="hc-title">{t("customers")}</h1>
         <p className="hc-subtitle">Manage every customer's account and credit in one place</p>
 
         {/* Add Customer */}
         <div className="hc-card">
-          <div className="hc-card-title">+ Add New Customer</div>
+          <div className="hc-card-title">
+  + {t("addCustomer")}
+</div>
           <div className="hc-add-row">
             <input
               type="text"
-              placeholder="Customer Name"
+              placeholder={t("customers")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="hc-input"
@@ -384,7 +388,7 @@ createdDate: new Date().toISOString().split("T")[0],
         <div className="hc-card">
           <input
             type="text"
-            placeholder="🔍 Search by name or phone"
+            placeholder={`🔍 ${t("search")}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="hc-search"
@@ -397,7 +401,13 @@ createdDate: new Date().toISOString().split("T")[0],
                 onClick={() => setFilterStatus(status)}
                 className={`hc-chip ${filterStatus === status ? "active" : ""}`}
               >
-                {status === "all" ? "All" : status === "due" ? "Due" : "Paid"}
+                {
+status === "all"
+? t("all")
+: status === "due"
+? t("due")
+: t("paid")
+}
               </button>
             ))}
           </div>
@@ -409,17 +419,23 @@ createdDate: new Date().toISOString().split("T")[0],
                 onClick={() => setSortOrder(order)}
                 className={`hc-chip ${sortOrder === order ? "active" : ""}`}
               >
-                {order === "newest" ? "Newest" : "Oldest"}
+                {
+order === "newest"
+? t("newest")
+: t("oldest")
+}
               </button>
             ))}
           </div>
         </div>
 
         {/* Customer List */}
-        <div className="hc-list-label">Customer List</div>
+        <div className="hc-list-label">
+  {t("customers")}
+</div>
 
         {visibleCustomers.length === 0 ? (
-          <div className="hc-card hc-empty">No customers match this view.</div>
+          <div className="hc-card hc-empty">t("customers")</div>
         ) : (
           <div className="hc-grid">
             {visibleCustomers.map((customer) => {
@@ -437,7 +453,7 @@ createdDate: new Date().toISOString().split("T")[0],
                     <div className="hc-name">{customer.name}</div>
                     <div className="hc-phone">{customer.phone}</div>
                     <span className={`hc-badge ${hasDue ? "due" : "paid"}`}>
-                      {hasDue ? `Due ৳${customer.due}` : "Paid"}
+                      {hasDue ? `${t("due")} ৳${customer.due}` : t("paid")}
                     </span>
                   </div>
 
@@ -445,7 +461,7 @@ createdDate: new Date().toISOString().split("T")[0],
                     onClick={() => navigate(`/customer/${customer.id}`)}
                     className="hc-details-btn"
                   >
-                    Details
+                    {t("edit")}
                   </button>
                 </div>
               );

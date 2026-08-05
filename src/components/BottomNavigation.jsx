@@ -1,4 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import { useState } from "react";
 import AddCustomerModal from "./AddCustomerModal";
 import {
@@ -10,6 +11,7 @@ import {
 } from "react-icons/fi";
 function BottomNavigation({ onCustomerAdded }) {
   const navigate = useNavigate();
+const { t } = useLanguage();
   const location = useLocation();
 
   const [pressed, setPressed] = useState(null);
@@ -19,13 +21,13 @@ const [showAddCustomer, setShowAddCustomer] = useState(false);
  const items = [
   {
     key: "home",
-    title: "Home",
+    title: t("dashboard"),
     icon: <FiHome />,
     path: "/dashboard",
   },
   {
     key: "customers",
-    title: "Customers",
+    title: t("customers"),
     icon: <FiUsers />,
     path: "/customers",
   },
@@ -40,14 +42,14 @@ const [showAddCustomer, setShowAddCustomer] = useState(false);
 
   {
     key: "reports",
-    title: "Reports",
+    title: t("overview"),
     icon: <FiBarChart2 />,
     path: "/business-overview",
   },
 
   {
     key: "settings",
-    title: "Settings",
+    title: t("settings"),
     icon: <FiSettings />,
     path: "/settings",
   },

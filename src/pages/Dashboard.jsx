@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { IoPower } from "react-icons/io5";
 import {
@@ -21,22 +22,22 @@ import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import notificationIcon from "../assets/icons/notification.svg";
 
-const NAV_CARDS = [
+const getNavCards = (t) => [
   {
     key: "customers",
-    title: "Customers",
+    title: t("customers"),
    icon: customersIcon,
     path: "/customers",
   },
   {
     key: "shop-profile",
-    title: "Shop Profile",
+    title: t("shopProfile"),
     icon: shopIcon,
     path: "/shop-profile",
   },
   {
   key: "settings",
-  title: "Settings",
+  title: t("settings"),
   icon: settingsIcon,
   path: "/settings",
 },
@@ -48,13 +49,13 @@ const NAV_CARDS = [
 },
   {
     key: "business-overview",
-    title: "Overview",
+    title: t("overview"),
     icon: overviewIcon,
     path: "/business-overview",
   },
   {
   key: "staff-management",
-  title: "Staff",
+  title: t("staff"),
   icon: staffIcon,
   path: "/staff-management",
 },
@@ -68,6 +69,7 @@ const NAV_CARDS = [
 
 function Dashboard() {
   const { user, loading, logout } = useContext(AuthContext);
+const { t } = useLanguage();
   const navigate = useNavigate();
   const [pressedKey, setPressedKey] = useState(null);
 
@@ -248,7 +250,7 @@ const loadDashboardStats = async () => {
         <div className="hd-header-row">
           <div>
             <div className="hd-brand">Smart Halkhata</div>
-            <div className="hd-brand-sub">Shop Dashboard</div>
+            <div className="hd-brand-sub">{t("dashboard")}</div>
           </div>
 
           <div className="hd-profile">
@@ -260,7 +262,7 @@ const loadDashboardStats = async () => {
 
       <div className="hd-body">
         <p className="hd-welcome">
-  Welcome back 👋 — quick access to everything below
+  {t("welcomeBack")} 👋
 </p>
 
 <div
@@ -282,7 +284,7 @@ const loadDashboardStats = async () => {
         color: "var(--text)",
       }}
     >
-      Total Due
+      {t("totalDue")}
     </div>
 
     <div
@@ -303,7 +305,7 @@ const loadDashboardStats = async () => {
         color: "#6B7280",
       }}
     >
-      Customers
+      {t("totalCustomers")}
     </div>
 
     <div
@@ -319,7 +321,7 @@ const loadDashboardStats = async () => {
 </div>
 
         <div className="hd-grid">
-          {NAV_CARDS.map((card) => (
+          {getNavCards(t).map((card) => (
             <div
               key={card.key}
               className={`hd-tile ${pressedKey === card.key ? "pressed" : ""}`}
@@ -360,7 +362,7 @@ const loadDashboardStats = async () => {
     color="#EF4444"
   />
 </div>
-            <div className="hd-tile-title">Logout</div>
+            <div className="hd-tile-title">{t("logout")}</div>
           </div>
         </div>
            </div>

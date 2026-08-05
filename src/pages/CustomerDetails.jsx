@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import BottomNavigation from "../components/BottomNavigation";
 import { useContext, useEffect, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 import { AuthContext } from "../context/AuthContext";
 import { db, storage } from "../firebase";
 import { logActivity } from "../utils/logActivity";
@@ -45,9 +46,12 @@ const formatDateTime = (timestamp) => {
   };
 };
 
-const PAYMENT_METHODS = ["Cash", "bKash", "Nagad", "Bank", "Other"];
-
 function CustomerDetails() {
+  const { t, language } = useLanguage();
+  const PAYMENT_METHODS =
+  language === "বাংলা"
+    ? ["নগদ", "বিকাশ", "নগদ (Nagad)", "ব্যাংক", "বিন্যান্স", "কার্ড", "অন্যান্য"]
+    : ["Cash", "bKash", "Nagad", "Bank", "Binance", "Card", "Other"];
   const { id } = useParams();
   const { user } = useContext(AuthContext);
 
@@ -580,8 +584,8 @@ createdDate: new Date().toISOString().split("T")[0],
                   <input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Name" className="cd-input" />
                   <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)} placeholder="Phone" className="cd-input" />
                   <div style={{ display: "flex", gap: "8px" }}>
-                    <button onClick={handleUpdateCustomer} className="cd-btn small" style={{ background: "#2563EB" }}>Save</button>
-                    <button onClick={() => setIsEditingCustomer(false)} className="cd-btn small outline">Cancel</button>
+                    <button onClick={handleUpdateCustomer}    className="cd-btn small" style={{ background: "#2563EB" }}>{t("save")}</button>
+                    <button onClick={() => setIsEditingCustomer(false)} className="cd-btn small outline">{t("cancel")}</button>
                   </div>
                   <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
                     <input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files[0])} style={{ fontSize: "12px" }} />
@@ -603,12 +607,12 @@ createdDate: new Date().toISOString().split("T")[0],
                       onClick={() => { setEditName(customer.name); setEditPhone(customer.phone); setIsEditingCustomer(true); }}
                       className="cd-btn small outline"
                     >
-                      Edit
+                     {t("edit")}
                     </button>
                   </div>
                   <p className="cd-phone">{customer.phone}</p>
                   <span className={`cd-due-badge ${hasDue ? "due" : "paid"}`}>
-                    {hasDue ? `Due ৳${customer.due}` : "Fully Paid"}
+                   {hasDue ? `${t("due")} ৳${customer.due}`: t("fullyPaid")}
                   </span>
                   <div
   style={{
@@ -634,29 +638,30 @@ createdDate: new Date().toISOString().split("T")[0],
 
         <div className="cd-action-grid">
           <div className="cd-card">
-            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>➕ Unpaid Balance</div>
+            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>➕ {t("addDue")}</div>
             <div className="cd-field-stack">
               <div>
-                <label className="cd-field-label">Amount</label>
+                <label className="cd-field-label">{t("amount")}</label>
                 <input type="number" placeholder="৳ 0" value={amount} onChange={(e) => setAmount(e.target.value)} className="cd-input" />
               </div>
               <div>
-                <label className="cd-field-label">Note (optional)</label>
+                <label className="cd-field-label">{t("note")}</label>
                 <input placeholder="e.g. Rice 25kg, Cement" value={dueNote} onChange={(e) => setDueNote(e.target.value)} className="cd-input" />
               </div>
             </div>
-            <button onClick={handleAddDue} className="cd-btn" style={{ background: "#DC2626" }}>Unpaid Balance</button>
+            <button onClick={handleAddDue} className="cd-btn" style={{ background: "#DC2626" }}>
+  {t("addDue")}</button>
           </div>
 
           <div className="cd-card">
-            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>💰 Receive Payment</div>
+            <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#111827", marginBottom: "10px" }}>💰 {t("receivePayment")}</div>
             <div className="cd-field-stack">
               <div>
-                <label className="cd-field-label">Amount</label>
+                <label className="cd-field-label">{t("amount")}</label>
                 <input type="number" placeholder="৳ 0" value={payment} onChange={(e) => setPayment(e.target.value)} className="cd-input" />
               </div>
               <div>
-                <label className="cd-field-label">Payment Method</label>
+                <label className="cd-field-label">{t("paymentMethod")}</label>
                 <select
   value={paymentMethod}
   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -685,11 +690,12 @@ createdDate: new Date().toISOString().split("T")[0],
 </select>
               </div>
               <div>
-                <label className="cd-field-label">Note (optional)</label>
+                <label className="cd-field-label">{t("note")}</label>
                 <input placeholder="e.g. Paid by bKash, Invoice 1005" value={paymentNote} onChange={(e) => setPaymentNote(e.target.value)} className="cd-input" />
               </div>
             </div>
-            <button onClick={handlePayment} className="cd-btn" style={{ background: "#16A34A" }}>Receive Payment</button>
+            <button onClick={handlePayment} className="cd-btn" style={{ background: "#16A34A" }}>
+  {t("receivePayment")}</button>
           </div>
         </div>
 
@@ -702,7 +708,7 @@ createdDate: new Date().toISOString().split("T")[0],
               <input type="file" accept=".xlsx,.xls" onChange={handleImportExcel} disabled={isImporting} style={{ display: "none" }} />
             </label>
 
-            <button onClick={handleDeleteAllTransactions} className="cd-btn small danger-outline">🗑 Delete All</button>
+            <button onClick={handleDeleteAllTransactions} className="cd-btn small danger-outline">{t("delete")}</button>
           </div>
         </div>
         <div style={{ fontSize: "12.5px", fontWeight: 700, color: "#6B7280", margin: "4px 0 10px" }}>
@@ -716,11 +722,11 @@ createdDate: new Date().toISOString().split("T")[0],
     flexWrap: "wrap",
   }}
 >
-  <h3 style={{ margin: 0 }}>Transaction History</h3>
+  <h3 style={{ margin: 0 }}>{t("transactionHistory")}</h3>
 
   <input
     type="text"
-    placeholder="Search Transaction ID, Note, Amount..."
+    placeholder={t("search")}
     value={searchTransaction}
     onChange={(e) => setSearchTransaction(e.target.value)}
     className="cd-input"
@@ -796,7 +802,7 @@ createdDate: new Date().toISOString().split("T")[0],
 </select>
 
 {transactions.length === 0 ? (
-          <div className="cd-card cd-empty">No transactions yet.</div>
+          <div className="cd-card cd-empty">{t("noTransactions")}</div>
         ) : (
           <div className="cd-txn-list">
             {transactions
@@ -865,7 +871,11 @@ return matchSearch && matchFilter && matchDate;
                 <div key={transaction.id} className="cd-txn-card" onClick={() => setSelectedTransaction(transaction)}>
                   <div className="cd-txn-top">
                     <div>
-                      <div className="cd-txn-type">{isPayment ? "💰 Payment Received" : "➕  ADuedded"}</div>
+                      <div className="cd-txn-type">
+  {isPayment
+    ? `💰 ${t("paymentReceived")}`
+    : `➕ ${t("dueAdded")}`}
+</div>
                       <div className="cd-txn-datetime">{dateInfo?.date} • {dateInfo?.time?.slice(0, 5)}</div>
                     </div>
                     <div className={`cd-txn-amount ${isPayment ? "in" : "out"}`}>
@@ -915,7 +925,7 @@ return matchSearch && matchFilter && matchDate;
 
                     <div style={{ fontSize: "13px", color: "var(--text)", lineHeight: 1.9 }}>
                       <div>
-                        <strong>Transaction ID:</strong>{" "}
+                        <strong>{t("transactionId")}:</strong>{" "}
                         <span
                           onClick={async () => {
                             try {
@@ -936,10 +946,10 @@ return matchSearch && matchFilter && matchDate;
                           {selectedTransaction.transactionId} 📋
                         </span>
                       </div>
-                      <div><strong>Date:</strong> {info?.date}</div>
-                      <div><strong>Time:</strong> {info?.time}</div>
+                      <div><strong>{t("date")}:</strong> {info?.date}</div>
+                      <div><strong>{t("time")}:</strong> {info?.time}</div>
                       {selectedTransaction.paymentMethod && (
-                        <div><strong>Payment Method:</strong> {selectedTransaction.paymentMethod}</div>
+                        <div><strong>{t("paymentMethod")}:</strong> {selectedTransaction.paymentMethod}</div>
                       )}
                       {selectedTransaction.note && (
                         <div><strong>Note:</strong> {selectedTransaction.note}</div>
@@ -948,11 +958,11 @@ return matchSearch && matchFilter && matchDate;
                     
 
                     <button onClick={() => handleDownloadPDF(selectedTransaction)} className="cd-btn" style={{ background: "#111827", marginTop: "10px" }}>
-                      Download PDF Receipt
+                      {t("downloadReceipt")}
                     </button>
 
                     <button onClick={() => setSelectedTransaction(null)} className="cd-btn outline" style={{ marginTop: "10px" }}>
-                      Close
+                     {t("close")}
                     </button>
                   </>
                 );

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -9,6 +10,7 @@ import StaffManagement from "./pages/StaffManagement";
 import ShopProfile from "./pages/ShopProfile";
 import Settings from "./pages/Settings";
 import BusinessOverview from "./pages/BusinessOverview";
+import ChangePassword from "./pages/ChangePassword";
 import Reports from "./pages/Reports";
 import ReportDetails from "./pages/ReportDetails";
 import FloatingReportButton from "./components/FloatingReportButton";
@@ -49,6 +51,7 @@ function App() {
   }, [user]);
   return (
     <BrowserRouter>
+  <LanguageProvider>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -90,11 +93,17 @@ function App() {
   path="/staff-management"
   element={<StaffManagement />}
 />
+
+<Route
+  path="/change-password"
+  element={<ChangePassword />}
+/>
         <Route path="*" element={<NotFound />} />
       </Routes>
    {user && window.location.pathname.startsWith("/customer") && (
   <FloatingReportButton />
 )}
+  </LanguageProvider>
 </BrowserRouter>
   );
 }
