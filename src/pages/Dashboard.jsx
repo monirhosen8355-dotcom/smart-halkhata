@@ -73,6 +73,7 @@ const { t } = useLanguage();
   const navigate = useNavigate();
 const [pressedKey, setPressedKey] = useState(null);
 const [showBalance, setShowBalance] = useState(false);
+const [showProfile, setShowProfile] = useState(false);
 
 useEffect(() => {
   if (!showBalance) return;
@@ -85,6 +86,8 @@ useEffect(() => {
 }, [showBalance]);
 const [totalCustomers, setTotalCustomers] = useState(0);
 const [totalDue, setTotalDue] = useState(0);
+
+const [shopName, setShopName] = useState("");
 
   useEffect(() => {
   if (!user) return;
@@ -120,7 +123,13 @@ const loadDashboardStats = async () => {
   });
 
   setTotalCustomers(snap.size);
-  setTotalDue(due);
+setTotalDue(due);
+
+const shopSnap = await getDoc(doc(db, "shops", user.uid));
+
+if (shopSnap.exists()) {
+  setShopName(shopSnap.data().shopName || "");
+}
 };
 
   if (loading) {
@@ -144,10 +153,58 @@ const loadDashboardStats = async () => {
 
         /* ===== Header ===== */
         .hd-header {
-          background: linear-gradient(135deg, #111827 0%, #1E3A8A 100%);
-          color: #fff;
-          padding: 14px 16px;
-        }
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg,#0F172A,#1D4ED8,#2563EB);
+  background-size: 300% 300%;
+  animation: gradientMove 15s ease infinite;
+  color: #fff;
+  padding: 16px;
+}
+
+.hd-header::before{
+  content:"";
+  position:absolute;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  top:-180px;
+  left:-100px;
+  filter:blur(10px);
+  animation: bubble1 18s linear infinite;
+}
+
+.hd-header::after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:rgba(255,255,255,.05);
+  right:-80px;
+  bottom:-140px;
+  filter:blur(12px);
+  animation:bubble2 20s linear infinite;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+@keyframes bubble1{
+  0%{transform:translate(0,0);}
+  50%{transform:translate(40px,30px);}
+  100%{transform:translate(0,0);}
+}
+
+@keyframes bubble2{
+  0%{transform:translate(0,0);}
+  50%{transform:translate(-35px,-20px);}
+  100%{transform:translate(0,0);}
+}
         @media (min-width: 640px) { .hd-header { padding: 18px 28px; } }
 
         .hd-header-row {
@@ -223,7 +280,16 @@ const loadDashboardStats = async () => {
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  transition: .2s;
+  transition: .22s ease;
+}
+
+.hd-tile:hover{
+  transform: translateY(-3px);
+}
+
+.hd-tile:active,
+.hd-tile.pressed{
+  transform: scale(.95);
 }
 
 .hd-tile:hover{
@@ -240,6 +306,7 @@ const loadDashboardStats = async () => {
   display:flex;
   align-items:center;
   justify-content:center;
+  transition:.22s;
 }
         @media (min-width: 640px) {
           .hd-tile-icon { font-size: 30px; width: 54px; height: 54px; }
@@ -267,47 +334,84 @@ const loadDashboardStats = async () => {
       `}</style>
 
       <div className="hd-header">
-       <div className="hd-header-row">
-  <div>
-    <div className="hd-brand">Smart Halkhata</div>
-    <div className="hd-brand-sub">{t("dashboard")}</div>
+       <div
+  className="hd-header-row"
+  style={{
+    position: "relative",
+    minHeight: "72px",
+  }}
+>
+ <div
+  onClick={() => setShowProfile(true)}
+  style={{
+    position: "absolute",
+    left: 0,
+    top: "50%",
+    transform: "translateY(-50%)",
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+    zIndex: 2,
+    transition: ".25s",
+  }}
+>
+  <div
+  style={{
+    width: "54px",
+    height: "54px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg,#60A5FA,#2563EB)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontWeight: "900",
+    fontSize: "22px",
+    overflow: "hidden",
+    border: "3px solid rgba(255,255,255,.35)",
+    boxShadow:
+      "0 10px 30px rgba(37,99,235,.45), inset 0 1px 2px rgba(255,255,255,.25)",
+    transition: "all .25s ease",
+  }}
+>
+    {(user.email || "?").charAt(0).toUpperCase()}
   </div>
+</div>
 
   <div
-    onClick={() => setShowBalance(!showBalance)}
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      background: "rgba(255,255,255,.12)",
-      padding: "8px 14px",
-      borderRadius: "999px",
-      cursor: "pointer",
-      transition: ".35s",
-      width: showBalance ? "170px" : "120px",
-      overflow: "hidden",
-    }}
-  >
+  onClick={() => setShowBalance(!showBalance)}
+  style={{
+    position: "absolute",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    background: "rgba(255,255,255,.12)",
+    backdropFilter: "blur(12px)",
+    padding: "8px 16px",
+    borderRadius: "999px",
+    cursor: "pointer",
+    transition: ".35s",
+    width: showBalance ? "180px" : "130px",
+    overflow: "hidden",
+  }}
+>
     <span style={{ color: "#fff", fontSize: "13px" }}>👁</span>
 
     <span
-      style={{
-        color: "#fff",
-        fontWeight: "700",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {showBalance ? `৳${totalDue.toLocaleString()}` : "মোট বাকি"}
-    </span>
+  style={{
+    color: "#fff",
+    fontWeight: "700",
+    whiteSpace: "nowrap",
+  }}
+>
+  {showBalance ? `৳${totalDue.toLocaleString()}` : "মোট বাকি"}
+</span>
   </div>
 
-  <div className="hd-profile">
-    <div className="hd-avatar">
-      {(user.email || "?").charAt(0).toUpperCase()}
-    </div>
-
-    <div className="hd-email">{user.email}</div>
-  </div>
+  <>
+</> 
 </div>
       </div>
 
@@ -329,10 +433,11 @@ const loadDashboardStats = async () => {
     src={card.icon}
     alt={card.title}
     style={{
-      width: "48px",
-      height: "48px",
-      objectFit: "contain",
-    }}
+  width: "52px",
+  height: "52px",
+  objectFit: "contain",
+  transition: ".25s",
+}}
   />
 </div>
               <div className="hd-tile-title">{card.title}</div>
@@ -358,6 +463,116 @@ const loadDashboardStats = async () => {
           </div>
         </div>
            </div>
+
+{showProfile && (
+  <div
+    onClick={() => setShowProfile(false)}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,.45)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "flex-end",
+    }}
+  >
+    <div
+  onClick={(e) => e.stopPropagation()}
+  style={{
+    width: "100%",
+    background: "rgba(255,255,255,.95)",
+    backdropFilter: "blur(25px)",
+    WebkitBackdropFilter: "blur(25px)",
+    borderRadius: "28px 28px 0 0",
+    padding: "24px",
+    animation: "fadeUp .25s ease",
+    boxShadow: "0 -20px 60px rgba(0,0,0,.25)",
+  }}
+>
+  <div
+    style={{
+      width: "55px",
+      height: "5px",
+      borderRadius: "999px",
+      background: "#CBD5E1",
+      margin: "0 auto 18px",
+    }}
+  />
+      <div
+        style={{
+          width: "60px",
+          height: "60px",
+          borderRadius: "50%",
+          background: "#2563EB",
+          color: "#fff",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "24px",
+          fontWeight: "700",
+          margin: "0 auto",
+        }}
+      >
+        {(user.email || "?").charAt(0).toUpperCase()}
+      </div>
+
+      <h3
+  style={{
+    textAlign: "center",
+    marginTop: "15px",
+    marginBottom: "5px",
+    color: "var(--text)",
+    fontSize: "20px",
+    fontWeight: "700",
+  }}
+>
+  {user.displayName || "User"}
+</h3>
+
+<div
+  style={{
+    textAlign: "center",
+    color: "#64748B",
+    fontSize: "14px",
+    lineHeight: "26px",
+    marginBottom: "20px",
+  }}
+>
+  <div>📧 {user.email}</div>
+  <div>📞 {user.phoneNumber || "Not Added"}</div>
+  <div>🏪 {shopName || "No Shop Name"}</div>
+</div>
+
+     <button
+  onClick={() => {
+    setShowProfile(false);
+    navigate("/shop-profile");
+  }}
+        className="cd-btn"
+        style={{
+          background: "#2563EB",
+          marginTop: "20px",
+        }}
+      >
+        Shop Profile
+      </button>
+
+      <button
+  onClick={() => {
+    setShowProfile(false);
+    logout();
+  }}
+        className="cd-btn"
+        style={{
+          background: "#DC2626",
+          marginTop: "10px",
+        }}
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+)}
 
 <BottomNavigation />
     </div>
