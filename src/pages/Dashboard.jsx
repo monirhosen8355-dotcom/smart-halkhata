@@ -75,6 +75,20 @@ const [pressedKey, setPressedKey] = useState(null);
 const [showBalance, setShowBalance] = useState(false);
 const [showProfile, setShowProfile] = useState(false);
 
+const drawerStyle = {
+  position: "fixed",
+  top: 0,
+  left: showProfile ? 0 : "-340px",
+  width: "320px",
+  maxWidth: "85%",
+  height: "100vh",
+  background: "var(--card)",
+  boxShadow: "0 0 40px rgba(0,0,0,.25)",
+  transition: "left .35s ease",
+  zIndex: 99999,
+  overflowY: "auto",
+};
+
 useEffect(() => {
   if (!showBalance) return;
 
@@ -410,59 +424,56 @@ if (shopSnap.exists()) {
 </span>
   </div>
 
-  <>
-</> 
 </div>
       </div>
 
      <div className="hd-body">
 <div className="hd-grid">
-          {getNavCards(t).map((card) => (
-            <div
-              key={card.key}
-              className={`hd-tile ${pressedKey === card.key ? "pressed" : ""}`}
-              onClick={() => navigate(card.path)}
-              onTouchStart={() => setPressedKey(card.key)}
-              onTouchEnd={() => setPressedKey(null)}
-              onMouseDown={() => setPressedKey(card.key)}
-              onMouseUp={() => setPressedKey(null)}
-              onMouseLeave={() => setPressedKey(null)}
-            >
-              <div className="hd-tile-icon">
-  <img
-    src={card.icon}
-    alt={card.title}
-    style={{
-  width: "52px",
-  height: "52px",
-  objectFit: "contain",
-  transition: ".25s",
-}}
-  />
-</div>
-              <div className="hd-tile-title">{card.title}</div>
-            </div>
-          ))}
+  {getNavCards(t).map((card) => (
+    <div
+      key={card.key}
+      className={`hd-tile ${pressedKey === card.key ? "pressed" : ""}`}
+      onClick={() => navigate(card.path)}
+      onTouchStart={() => setPressedKey(card.key)}
+      onTouchEnd={() => setPressedKey(null)}
+      onMouseDown={() => setPressedKey(card.key)}
+      onMouseUp={() => setPressedKey(null)}
+      onMouseLeave={() => setPressedKey(null)}
+    >
+      <div className="hd-tile-icon">
+        <img
+          src={card.icon}
+          alt={card.title}
+          style={{
+            width: "48px",
+            height: "48px",
+            objectFit: "contain",
+            transition: ".25s",
+          }}
+        />
+      </div>
 
-          <div
-            className={`hd-tile logout ${pressedKey === "logout" ? "pressed" : ""}`}
-            onClick={logout}
-            onTouchStart={() => setPressedKey("logout")}
-            onTouchEnd={() => setPressedKey(null)}
-            onMouseDown={() => setPressedKey("logout")}
-            onMouseUp={() => setPressedKey(null)}
-            onMouseLeave={() => setPressedKey(null)}
-          >
-            <div className="hd-tile-icon">
-  <IoPower
-    size={48}
-    color="#EF4444"
-  />
+      <div className="hd-tile-title">{card.title}</div>
+    </div>
+  ))}
+
+  <div
+    className={`hd-tile logout ${pressedKey === "logout" ? "pressed" : ""}`}
+    onClick={logout}
+    onTouchStart={() => setPressedKey("logout")}
+    onTouchEnd={() => setPressedKey(null)}
+    onMouseDown={() => setPressedKey("logout")}
+    onMouseUp={() => setPressedKey(null)}
+    onMouseLeave={() => setPressedKey(null)}
+  >
+    <div className="hd-tile-icon">
+      <IoPower size={48} color="#EF4444" />
+    </div>
+
+    <div className="hd-tile-title">{t("logout")}</div>
+  </div>
 </div>
-            <div className="hd-tile-title">{t("logout")}</div>
-          </div>
-        </div>
-           </div>
+</div>
 
 {showProfile && (
   <div
@@ -471,108 +482,222 @@ if (shopSnap.exists()) {
       position: "fixed",
       inset: 0,
       background: "rgba(0,0,0,.45)",
-      zIndex: 9999,
-      display: "flex",
-      alignItems: "flex-end",
+      zIndex: 99998,
     }}
-  >
-    <div
-  onClick={(e) => e.stopPropagation()}
+  />
+)}
+
+<div
   style={{
-    width: "100%",
-    background: "rgba(255,255,255,.95)",
-    backdropFilter: "blur(25px)",
-    WebkitBackdropFilter: "blur(25px)",
-    borderRadius: "28px 28px 0 0",
-    padding: "24px",
-    animation: "fadeUp .25s ease",
-    boxShadow: "0 -20px 60px rgba(0,0,0,.25)",
+    ...drawerStyle,
+    display: "flex",
+    flexDirection: "column",
+    background:
+"linear-gradient(135deg,#1E3A8A 0%,#2563EB 40%,#3B82F6 100%)",
+    color: "#fff",
   }}
 >
   <div
     style={{
-      width: "55px",
-      height: "5px",
-      borderRadius: "999px",
-      background: "#CBD5E1",
-      margin: "0 auto 18px",
+      padding: "25px",
     }}
-  />
-      <div
-        style={{
-          width: "60px",
-          height: "60px",
-          borderRadius: "50%",
-          background: "#2563EB",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "24px",
-          fontWeight: "700",
-          margin: "0 auto",
-        }}
-      >
-        {(user.email || "?").charAt(0).toUpperCase()}
-      </div>
-
-      <h3
+  >
+   <div
   style={{
-    textAlign: "center",
-    marginTop: "15px",
-    marginBottom: "5px",
-    color: "var(--text)",
-    fontSize: "20px",
-    fontWeight: "700",
+    width: "95px",
+    height: "95px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg,#60A5FA,#2563EB)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontSize: "34px",
+    fontWeight: "800",
+    border: "4px solid rgba(255,255,255,.25)",
+    boxShadow: "0 15px 35px rgba(0,0,0,.25)",
+    margin: "10px auto 20px",
+  }}
+    >
+      {(user.email || "?").charAt(0).toUpperCase()}
+    </div>
+
+    <div
+style={{
+display:"flex",
+justifyContent:"center",
+alignItems:"center",
+gap:"8px",
+marginTop:"10px",
+}}
+
+>
+<h2
+style={{
+margin:0,
+fontSize:"28px",
+fontWeight:"800",
+}}
+>
+{shopName || "My Shop"}
+</h2>
+
+<div
+style={{
+background:"#22C55E",
+width:"24px",
+height:"24px",
+borderRadius:"50%",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+fontSize:"13px",
+}}
+>
+✓
+</div>
+</div>
+
+<p
+  style={{
+    marginTop: "6px",
+    color: "rgba(255,255,255,.75)",
+    fontSize: "13px",
   }}
 >
-  {user.displayName || "User"}
-</h3>
+  {user.email}
+</p>
 
 <div
   style={{
-    textAlign: "center",
-    color: "#64748B",
-    fontSize: "14px",
-    lineHeight: "26px",
-    marginBottom: "20px",
+    marginTop: "30px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
   }}
 >
-  <div>📧 {user.email}</div>
-  <div>📞 {user.phoneNumber || "Not Added"}</div>
-  <div>🏪 {shopName || "No Shop Name"}</div>
+
+{[
+  ["👤","Edit Profile"],
+  ["🏪","Shop Information"],
+  ["📞","Phone Number"],
+  ["🔔","Notifications"],
+  ["🌙","Dark Mode"],
+  ["🌐","Language"],
+  ["🔐","Change Password"],
+  ["📊","Reports"],
+  ["⚙️","Settings"],
+  ["❓","Help & Support"],
+  ["ℹ️","About App"],
+].map(([icon,title])=>(
+<div
+key={title}
+style={{
+display:"flex",
+alignItems:"center",
+justifyContent:"space-between",
+padding:"14px 16px",
+borderRadius:"16px",
+background:"rgba(255,255,255,.10)",
+backdropFilter:"blur(14px)",
+border:"1px solid rgba(255,255,255,.15)",
+cursor:"pointer",
+transition:".25s",
+}}
+>
+<div
+style={{
+display:"flex",
+alignItems:"center",
+gap:"12px",
+fontWeight:"700",
+}}
+>
+<span style={{fontSize:"20px"}}>{icon}</span>
+<span>{title}</span>
 </div>
 
-     <button
-  onClick={() => {
-    setShowProfile(false);
-    navigate("/shop-profile");
-  }}
-        className="cd-btn"
-        style={{
-          background: "#2563EB",
-          marginTop: "20px",
-        }}
-      >
-        Shop Profile
-      </button>
+<div
+style={{
+fontSize:"20px",
+opacity:.7,
+}}
+>
+›
+</div>
+</div>
+))
+}
 
-      <button
-  onClick={() => {
-    setShowProfile(false);
-    logout();
+<div
+  style={{
+    background: "rgba(255,255,255,.12)",
+    borderRadius: "16px",
+    padding: "14px 16px",
   }}
-        className="cd-btn"
-        style={{
-          background: "#DC2626",
-          marginTop: "10px",
-        }}
-      >
-        Logout
-      </button>
-    </div>
+>
+  <div style={{ fontSize: "12px", opacity: .7 }}>🏪 Shop</div>
+  <div style={{ fontWeight: "700", marginTop: "4px" }}>
+    {shopName || "No Shop"}
   </div>
-)}
+</div>
+
+<div
+  style={{
+    background: "rgba(255,255,255,.12)",
+    borderRadius: "16px",
+    padding: "14px 16px",
+  }}
+>
+  <div style={{ fontSize: "12px", opacity: .7 }}>📧 Email</div>
+  <div
+    style={{
+      fontWeight: "700",
+      marginTop: "4px",
+      wordBreak: "break-word",
+    }}
+  >
+    {user.email}
+  </div>
+</div>
+  <button
+    onClick={() => {
+      setShowProfile(false);
+      navigate("/shop-profile");
+    }}
+    style={{
+      height: "52px",
+      border: "none",
+      borderRadius: "14px",
+      background: "rgba(255,255,255,.15)",
+      color: "#fff",
+      fontWeight: "700",
+      cursor: "pointer",
+    }}
+  >
+    👤 Profile
+  </button>
+
+  <button
+  onClick={logout}
+  style={{
+    marginTop: "18px",
+    height: "54px",
+    border: "none",
+    borderRadius: "16px",
+    background: "#DC2626",
+    color: "#fff",
+    fontWeight: "800",
+    fontSize: "16px",
+    cursor: "pointer",
+    
+  }}
+>
+  🚪 Logout
+</button>
+</div>
+  </div>
+</div>
 
 <BottomNavigation />
     </div>
