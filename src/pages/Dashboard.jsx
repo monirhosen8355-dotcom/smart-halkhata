@@ -13,6 +13,7 @@ import {
 import { db } from "../firebase";
 import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
+import NatureHeader from "../components/NatureHeader";
 import overviewIcon from "../assets/icons/overview.svg";
 import staffIcon from "../assets/icons/staff.svg";
 import reportsIcon from "../assets/icons/reports.svg";
@@ -21,6 +22,7 @@ import customersIcon from "../assets/icons/customers.svg";
 import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import notificationIcon from "../assets/icons/notification.svg";
+import avatar1 from "../assets/avatars/avatar1.png";
 
 const getNavCards = (t) => [
   {
@@ -74,12 +76,13 @@ const { t } = useLanguage();
 const [pressedKey, setPressedKey] = useState(null);
 const [showBalance, setShowBalance] = useState(false);
 const [showProfile, setShowProfile] = useState(false);
+const [showAvatars, setShowAvatars] = useState(false);
 
 const drawerStyle = {
   position: "fixed",
   top: 0,
   left: showProfile ? 0 : "-340px",
-  width: "320px",
+  width: "340px",
   maxWidth: "85%",
   height: "100vh",
   background: "var(--card)",
@@ -102,6 +105,7 @@ const [totalCustomers, setTotalCustomers] = useState(0);
 const [totalDue, setTotalDue] = useState(0);
 
 const [shopName, setShopName] = useState("");
+const [shopLogo, setShopLogo] = useState("");
 
   useEffect(() => {
   if (!user) return;
@@ -143,6 +147,7 @@ const shopSnap = await getDoc(doc(db, "shops", user.uid));
 
 if (shopSnap.exists()) {
   setShopName(shopSnap.data().shopName || "");
+setShopLogo(shopSnap.data().logoUrl || "");
 }
 };
 
@@ -167,6 +172,19 @@ if (shopSnap.exists()) {
 
         /* ===== Header ===== */
         .hd-header {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg,#0F172A,#1D4ED8,#2563EB);
+  background-size: 300% 300%;
+  animation: gradientMove 15s ease infinite;
+  color: #fff;
+  padding: 16px;
+  border-bottom-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+  box-shadow: 0 10px 35px rgba(37,99,235,.28);
+  position: relative;
+overflow: hidden;
+}
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg,#0F172A,#1D4ED8,#2563EB);
@@ -283,7 +301,19 @@ if (shopSnap.exists()) {
           .hd-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
         }
 
-        .hd-tile {
+        .hd-tile{
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  padding:8px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  cursor:pointer;
+  transition:.22s ease;
+}
   background: transparent;
   border: none;
   box-shadow: none;
@@ -298,11 +328,13 @@ if (shopSnap.exists()) {
 }
 
 .hd-tile:hover{
-  transform: translateY(-3px);
+  transform:translateY(-2px);
 }
 
 .hd-tile:active,
 .hd-tile.pressed{
+  transform:scale(.95);
+}
   transform: scale(.95);
 }
 
@@ -315,6 +347,13 @@ if (shopSnap.exists()) {
           box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .hd-tile-icon{
+  width:64px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.22s;
+}
   width:64px;
   height:64px;
   display:flex;
@@ -335,6 +374,75 @@ if (shopSnap.exists()) {
 
         .hd-tile.logout .hd-tile-icon { background: #FEF2F2; }
         .hd-tile.logout .hd-tile-title { color: #DC2626; }
+        @keyframes balanceFloat{
+  0%{
+    transform:translateX(-50%) translateY(0);
+  }
+  50%{
+    transform:translateX(-50%) translateY(-3px);
+  }
+  100%{
+    transform:translateX(-50%) translateY(0);
+  }
+}
+  .hd-bg-wave{
+position:absolute;
+border-radius:50%;
+filter:blur(70px);
+pointer-events:none;
+opacity:.28;
+animation:waveMove 16s linear infinite;
+}
+
+.wave1{
+width:260px;
+height:260px;
+background:#7DD3FC;
+left:-60px;
+top:-100px;
+}
+
+.wave2{
+width:340px;
+height:340px;
+background:#60A5FA;
+right:-120px;
+top:-120px;
+animation-duration:22s;
+}
+
+.wave3{
+width:220px;
+height:220px;
+background:#93C5FD;
+left:45%;
+top:-80px;
+animation-duration:18s;
+}
+
+@keyframes waveMove{
+
+0%{
+transform:translate(0,0) scale(1);
+}
+
+25%{
+transform:translate(40px,15px) scale(1.08);
+}
+
+50%{
+transform:translate(-25px,30px) scale(.96);
+}
+
+75%{
+transform:translate(30px,-15px) scale(1.05);
+}
+
+100%{
+transform:translate(0,0) scale(1);
+}
+
+}
               @keyframes fadeIn{
           from{
             opacity:0;
@@ -348,6 +456,11 @@ if (shopSnap.exists()) {
       `}</style>
 
       <div className="hd-header">
+  <NatureHeader />
+
+<div className="hd-bg-wave wave1"></div>
+<div className="hd-bg-wave wave2"></div>
+<div className="hd-bg-wave wave3"></div>
        <div
   className="hd-header-row"
   style={{
@@ -388,7 +501,52 @@ if (shopSnap.exists()) {
     transition: "all .25s ease",
   }}
 >
-    {(user.email || "?").charAt(0).toUpperCase()}
+    <div
+style={{
+position:"relative",
+width:"100%",
+height:"100%",
+}}
+>
+{shopLogo ? (
+  <img
+    src={shopLogo}
+    alt="Profile"
+    style={{
+      width:"100%",
+      height:"100%",
+      objectFit:"cover",
+      borderRadius:"50%",
+    }}
+  />
+) : (
+  (user.email || "?").charAt(0).toUpperCase()
+)}
+
+<div
+onClick={(e)=>{
+e.stopPropagation();
+setShowAvatars(true);
+}}
+style={{
+position:"absolute",
+right:"-6px",
+bottom:"-4px",
+width:"26px",
+height:"26px",
+borderRadius:"50%",
+background:"#22C55E",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+fontSize:"14px",
+border:"3px solid #fff",
+}}
+>
+✏️
+</div>
+
+</div>
   </div>
 </div>
 
@@ -401,7 +559,12 @@ if (shopSnap.exists()) {
     display: "flex",
     alignItems: "center",
     gap: "10px",
-    background: "rgba(255,255,255,.12)",
+    background:
+"linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.08))",
+backdropFilter:"blur(18px)",
+border:"1px solid rgba(255,255,255,.18)",
+boxShadow:"0 10px 25px rgba(0,0,0,.15)",
+animation:"balanceFloat 4s ease-in-out infinite",
     backdropFilter: "blur(12px)",
     padding: "8px 16px",
     borderRadius: "999px",
@@ -498,10 +661,17 @@ if (shopSnap.exists()) {
   }}
 >
   <div
-    style={{
-      padding: "25px",
-    }}
-  >
+  style={{
+    padding: "30px 22px",
+    background:
+      "linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02))",
+    borderBottom: "1px solid rgba(255,255,255,.12)",
+    position: "sticky",
+    top: 0,
+    backdropFilter: "blur(18px)",
+    zIndex: 5,
+  }}
+>
    <div
   style={{
     width: "95px",
@@ -519,7 +689,29 @@ if (shopSnap.exists()) {
     margin: "10px auto 20px",
   }}
     >
-      {(user.email || "?").charAt(0).toUpperCase()}
+      {shopLogo ? (
+  <img
+    src={shopLogo}
+    alt="Profile"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      borderRadius: "50%",
+    }}
+  />
+) : (
+  <img
+    src={avatar1}
+    alt="Profile"
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      borderRadius: "50%",
+    }}
+  />
+)}
     </div>
 
     <div
@@ -573,25 +765,33 @@ fontSize:"13px",
     marginTop: "30px",
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: "15px",
   }}
 >
 
 {[
-  ["👤","Edit Profile"],
-  ["🏪","Shop Information"],
-  ["📞","Phone Number"],
-  ["🔔","Notifications"],
-  ["🌙","Dark Mode"],
-  ["🌐","Language"],
-  ["🔐","Change Password"],
-  ["📊","Reports"],
-  ["⚙️","Settings"],
-  ["❓","Help & Support"],
-  ["ℹ️","About App"],
-].map(([icon,title])=>(
+  ["👤","Edit Profile","/shop-profile"],
+  ["🏪","Shop Information","/shop-profile"],
+  ["📞","Phone Number","/shop-profile"],
+  ["🔔","Notifications","/notifications"],
+  ["🌙","Dark Mode","/settings"],
+  ["🌐","Language","/settings"],
+  ["🔐","Change Password","/change-password"],
+  ["📊","Reports","/reports"],
+  ["⚙️","Settings","/settings"],
+  ["❓","Help & Support",null],
+  ["ℹ️","About App",null],
+].map(([icon,title,path])=>(
 <div
 key={title}
+onClick={()=>{
+  if(path){
+    setShowProfile(false);
+    navigate(path);
+  }else{
+    alert("Coming Soon");
+  }
+}}
 style={{
 display:"flex",
 alignItems:"center",
@@ -603,6 +803,21 @@ backdropFilter:"blur(14px)",
 border:"1px solid rgba(255,255,255,.15)",
 cursor:"pointer",
 transition:".25s",
+boxShadow:"0 6px 20px rgba(0,0,0,.10)",
+}}
+onMouseEnter={(e)=>{
+e.currentTarget.style.transform="translateX(6px)";
+e.currentTarget.style.background="rgba(255,255,255,.18)";
+}}
+onMouseLeave={(e)=>{
+e.currentTarget.style.transform="translateX(0px)";
+e.currentTarget.style.background="rgba(255,255,255,.10)";
+}}
+onMouseDown={(e)=>{
+e.currentTarget.style.transform="scale(.97)";
+}}
+onMouseUp={(e)=>{
+e.currentTarget.style.transform="translateX(6px)";
 }}
 >
 <div
@@ -623,7 +838,7 @@ fontSize:"20px",
 opacity:.7,
 }}
 >
-›
+➜
 </div>
 </div>
 ))
@@ -690,7 +905,7 @@ opacity:.7,
     fontWeight: "800",
     fontSize: "16px",
     cursor: "pointer",
-    
+
   }}
 >
   🚪 Logout

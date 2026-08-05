@@ -4,6 +4,16 @@ import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import BottomNavigation from "../components/BottomNavigation";
+import avatar1 from "../assets/avatars/avatar1.png";
+import avatar2 from "../assets/avatars/avatar2.png";
+import avatar3 from "../assets/avatars/avatar3.png";
+import avatar4 from "../assets/avatars/avatar4.png";
+import avatar5 from "../assets/avatars/avatar5.png";
+import avatar6 from "../assets/avatars/avatar6.png";
+import avatar7 from "../assets/avatars/avatar7.png";
+import avatar8 from "../assets/avatars/avatar8.png";
+import avatar9 from "../assets/avatars/avatar9.png";
+import avatar10 from "../assets/avatars/avatar10.png";
 
 function ShopProfile() {
   const { user } = useContext(AuthContext);
@@ -18,6 +28,21 @@ function ShopProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [logoFile, setLogoFile] = useState(null);
   const [saving, setSaving] = useState(false);
+const [showAvatars, setShowAvatars] = useState(false);
+const [selectedAvatar, setSelectedAvatar] = useState(profile.logoUrl);
+
+const avatars = [
+  avatar1,
+  avatar2,
+  avatar3,
+  avatar4,
+  avatar5,
+  avatar6,
+  avatar7,
+  avatar8,
+  avatar9,
+  avatar10,
+];
 
   useEffect(() => {
     if (user) loadProfile();
@@ -160,7 +185,13 @@ function ShopProfile() {
         <p className="sp-subtitle">This information appears on receipts and customer notifications</p>
 
         <div className="sp-card">
-          <div className="sp-logo-wrap">
+          <div
+  className="sp-logo-wrap"
+  onClick={() => isEditing && setShowAvatars(!showAvatars)}
+  style={{
+    cursor: isEditing ? "pointer" : "default",
+  }}
+>
             {profile.logoUrl ? (
               <img src={profile.logoUrl} alt="Shop logo" className="sp-logo" />
             ) : (
@@ -170,7 +201,75 @@ function ShopProfile() {
             )}
           </div>
 
-          {isEditing ? (
+{showAvatars && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,.45)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "flex-end",
+    }}
+    onClick={() => setShowAvatars(false)}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        width: "100%",
+        background: "#fff",
+        borderTopLeftRadius: "24px",
+        borderTopRightRadius: "24px",
+        padding: "20px",
+        maxHeight: "70vh",
+        overflowY: "auto",
+      }}
+    >
+      <h3
+        style={{
+          margin: "0 0 15px",
+          textAlign: "center",
+          fontWeight: 700,
+        }}
+      >
+        Choose Profile Picture
+      </h3>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4,1fr)",
+          gap: "15px",
+        }}
+      >
+        {avatars.map((img, i) => (
+          <img
+            key={i}
+            src={img}
+            onClick={() => {
+              setSelectedAvatar(img);
+              setProfile((p) => ({ ...p, logoUrl: img }));
+              setShowAvatars(false);
+            }}
+            style={{
+              width: "75px",
+              height: "75px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              objectFit: "cover",
+              border:
+                selectedAvatar === img
+                  ? "3px solid #2563EB"
+                  : "2px solid #E5E7EB",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+{isEditing ? (
             <div>
               <div className="sp-field">
                 <label className="sp-label">Shop Name</label>
@@ -209,16 +308,6 @@ function ShopProfile() {
                   value={profile.address}
                   onChange={(e) => setProfile({ ...profile, address: e.target.value })}
                   className="sp-input"
-                />
-              </div>
-
-              <div className="sp-field">
-                <label className="sp-label">Shop Logo</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setLogoFile(e.target.files[0])}
-                  style={{ fontSize: "12.5px" }}
                 />
               </div>
 
