@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -17,6 +18,7 @@ import avatar10 from "../assets/avatars/avatar10.png";
 
 function ShopProfile() {
   const { user } = useContext(AuthContext);
+const location = useLocation();
 
   const [profile, setProfile] = useState({
     shopName: "",
@@ -45,8 +47,17 @@ const avatars = [
 ];
 
   useEffect(() => {
-    if (user) loadProfile();
-  }, [user]);
+  if (user) loadProfile();
+}, [user]);
+
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+
+  if (params.get("avatar") === "1") {
+    setIsEditing(true);
+    setShowAvatars(true);
+  }
+}, [location]);
 
   const loadProfile = async () => {
     const ref = doc(db, "shops", user.uid);
@@ -187,11 +198,33 @@ const avatars = [
         <div className="sp-card">
           <div
   className="sp-logo-wrap"
-  onClick={() => isEditing && setShowAvatars(!showAvatars)}
   style={{
-    cursor: isEditing ? "pointer" : "default",
+    position: "relative",
+    textAlign: "center",
   }}
 >
+  {isEditing && (
+  <button
+    onClick={() => setShowAvatars(true)}
+    style={{
+      position: "absolute",
+      right: "calc(50% - 55px)",
+      bottom: "0",
+      width: "30px",
+      height: "30px",
+      borderRadius: "50%",
+      border: "none",
+      background: "#22C55E",
+      color: "#fff",
+      cursor: "pointer",
+      fontSize: "15px",
+      boxShadow: "0 4px 10px rgba(0,0,0,.25)",
+      zIndex: 20,
+    }}
+  >
+    ✏️
+  </button>
+)}
             {profile.logoUrl ? (
               <img src={profile.logoUrl} alt="Shop logo" className="sp-logo" />
             ) : (

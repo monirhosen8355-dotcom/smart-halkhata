@@ -68,7 +68,7 @@ function AvatarPicker({
         gridTemplateColumns:"repeat(4,1fr)",
         gap:"16px",
       }}
-      ></div>
+>
               {avatars.map((img, i) => (
           <div
             key={i}
@@ -126,8 +126,3 @@ function AvatarPicker({
 }
 
 export default AvatarPicker;
-
-
-1.ei khane mone hoi eror ase 
-2.mobile a profile button chara ar ekta o kaj korena 
-3.choto profile icon tai dag ta kisher seta bad dite hobe

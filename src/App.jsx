@@ -8,9 +8,11 @@ import CustomerDetails from "./pages/CustomerDetails";
 import NotFound from "./pages/NotFound";
 import StaffManagement from "./pages/StaffManagement";
 import ShopProfile from "./pages/ShopProfile";
+import HelpSupport from "./pages/HelpSupport";
 import Settings from "./pages/Settings";
 import BusinessOverview from "./pages/BusinessOverview";
 import ChangePassword from "./pages/ChangePassword";
+import About from "./pages/About";
 import Reports from "./pages/Reports";
 import ReportDetails from "./pages/ReportDetails";
 
@@ -97,6 +99,15 @@ function App() {
 <Route
   path="/change-password"
   element={<ChangePassword />}
+/>
+<Route
+  path="/about"
+  element={<About />}
+/>
+
+<Route
+  path="/help-support"
+  element={<HelpSupport />}
 />
         <Route path="*" element={<NotFound />} />
       </Routes>

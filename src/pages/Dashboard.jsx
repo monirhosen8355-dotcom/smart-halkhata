@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { Navigate, useNavigate } from "react-router-dom";
-import { IoPower } from "react-icons/io5";
+import { IoPower, IoInformationCircleOutline } from "react-icons/io5";
 import {
   doc,
   getDoc,
@@ -14,6 +14,7 @@ import { db } from "../firebase";
 import { useEffect } from "react";
 import BottomNavigation from "../components/BottomNavigation";
 import NatureHeader from "../components/NatureHeader";
+import AvatarPicker from "../components/AvatarPicker";
 import overviewIcon from "../assets/icons/overview.svg";
 import staffIcon from "../assets/icons/staff.svg";
 import reportsIcon from "../assets/icons/reports.svg";
@@ -22,6 +23,7 @@ import customersIcon from "../assets/icons/customers.svg";
 import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import notificationIcon from "../assets/icons/notification.svg";
+import supportIcon from "../assets/icons/support.svg";
 import avatar1 from "../assets/avatars/avatar1.png";
 
 const getNavCards = (t) => [
@@ -68,6 +70,12 @@ const getNavCards = (t) => [
   path: "/reports",
 },
 ];
+
+const ABOUT_CARD = {
+  key: "about",
+  title: "About",
+  path: "/about",
+};
 
 function Dashboard() {
   const { user, loading, logout } = useContext(AuthContext);
@@ -523,29 +531,6 @@ height:"100%",
   (user.email || "?").charAt(0).toUpperCase()
 )}
 
-<div
-onClick={(e)=>{
-e.stopPropagation();
-setShowAvatars(true);
-}}
-style={{
-position:"absolute",
-right:"-6px",
-bottom:"-4px",
-width:"26px",
-height:"26px",
-borderRadius:"50%",
-background:"#22C55E",
-display:"flex",
-alignItems:"center",
-justifyContent:"center",
-fontSize:"14px",
-border:"3px solid #fff",
-}}
->
-✏️
-</div>
-
 </div>
   </div>
 </div>
@@ -621,8 +606,24 @@ animation:"balanceFloat 4s ease-in-out infinite",
   ))}
 
   <div
-    className={`hd-tile logout ${pressedKey === "logout" ? "pressed" : ""}`}
-    onClick={logout}
+      key={ABOUT_CARD.key}
+            className={`hd-tile ${pressedKey === ABOUT_CARD.key ? "pressed" : ""}`}
+            onClick={() => navigate(ABOUT_CARD.path)}
+            onTouchStart={() => setPressedKey(ABOUT_CARD.key)}
+            onTouchEnd={() => setPressedKey(null)}
+            onMouseDown={() => setPressedKey(ABOUT_CARD.key)}
+            onMouseUp={() => setPressedKey(null)}
+            onMouseLeave={() => setPressedKey(null)}
+          >
+            <div className="hd-tile-icon">
+              <IoInformationCircleOutline size={48} color="#2563EB" />
+            </div>
+            <div className="hd-tile-title">{ABOUT_CARD.title}</div>
+          </div>
+
+          <div
+            className={`hd-tile logout ${pressedKey === "logout" ? "pressed" : ""}`}
+            onClick={logout}
     onTouchStart={() => setPressedKey("logout")}
     onTouchEnd={() => setPressedKey(null)}
     onMouseDown={() => setPressedKey("logout")}
@@ -687,6 +688,8 @@ animation:"balanceFloat 4s ease-in-out infinite",
     border: "4px solid rgba(255,255,255,.25)",
     boxShadow: "0 15px 35px rgba(0,0,0,.25)",
     margin: "10px auto 20px",
+    position: "relative",
+overflow: "visible",
   }}
     >
       {shopLogo ? (
@@ -712,6 +715,32 @@ animation:"balanceFloat 4s ease-in-out infinite",
     }}
   />
 )}
+<div
+  onClick={(e) => {
+    e.stopPropagation();
+    setShowProfile(false);
+    navigate("/shop-profile?avatar=1");
+  }}
+  style={{
+    position: "absolute",
+    right: "-6px",
+    bottom: "-6px",
+    width: "28px",
+    height: "28px",
+    borderRadius: "50%",
+    background: "#22C55E",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontSize: "14px",
+    cursor: "pointer",
+    border: "3px solid #fff",
+    zIndex: 999,
+  }}
+>
+  ✏️
+</div>
     </div>
 
     <div
@@ -779,8 +808,8 @@ fontSize:"13px",
   ["🔐","Change Password","/change-password"],
   ["📊","Reports","/reports"],
   ["⚙️","Settings","/settings"],
-  ["❓","Help & Support",null],
-  ["ℹ️","About App",null],
+  ["❓","Help & Support","/help-support"],
+  ["ℹ️","About App","/about"],
 ].map(([icon,title,path])=>(
 <div
 key={title}
@@ -789,8 +818,9 @@ onClick={()=>{
     setShowProfile(false);
     navigate(path);
   }else{
-    alert("Coming Soon");
-  }
+    setShowProfile(false);
+    navigate("/about");
+}
 }}
 style={{
 display:"flex",
