@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(shopId) {
+      return isSignedIn() && request.auth.uid == shopId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function underSizeLimit() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+
+    match /shops/{shopId}/customers/{customerId}/{fileName} {
+      allow read: if isOwner(shopId) || isAdmin();
+
+      allow write: if isOwner(shopId)
+        && isImage()
+        && underSizeLimit();
+    }
+
+    match /shops/{shopId}/dps/{dpsId}/{party}/{fileName} {
+      allow read: if isOwner(shopId) || isAdmin();
+
+      allow write: if isOwner(shopId)
+        && isImage()
+        && underSizeLimit();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

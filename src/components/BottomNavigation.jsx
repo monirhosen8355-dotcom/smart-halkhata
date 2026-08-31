@@ -1,0 +1,253 @@
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
+import { useState } from "react";
+import AddCustomerModal from "./AddCustomerModal";
+import {
+  FiHome,
+  FiUsers,
+  FiBarChart2,
+  FiSettings,
+  FiPlus,
+} from "react-icons/fi";
+function BottomNavigation({ onCustomerAdded }) {
+  const navigate = useNavigate();
+const { t } = useLanguage();
+  const location = useLocation();
+
+  const [pressed, setPressed] = useState(null);
+const [showMenu, setShowMenu] = useState(false);
+const [showAddCustomer, setShowAddCustomer] = useState(false);
+
+ const items = [
+  {
+    key: "home",
+    title: t("dashboard"),
+    icon: <FiHome />,
+    path: "/dashboard",
+  },
+  {
+    key: "customers",
+    title: t("customers"),
+    icon: <FiUsers />,
+    path: "/customers",
+  },
+
+  {
+    key: "add",
+    title: "",
+    icon: <FiPlus />,
+    path: "#",
+    fab: true,
+  },
+
+  {
+    key: "reports",
+    title: t("overview"),
+    icon: <FiBarChart2 />,
+    path: "/business-overview",
+  },
+
+  {
+    key: "settings",
+    title: t("settings"),
+    icon: <FiSettings />,
+    path: "/settings",
+  },
+];
+
+  return (
+    <>
+      <style>{`
+      .bn-root{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        display:flex;
+        justify-content:center;
+        z-index:9999;
+      }
+
+      .bn-wrapper{
+        width:100%;
+        max-width:520px;
+        height:72px;
+        background:#fff;
+        border-top:1px solid #E5E7EB;
+        border-radius:22px 22px 0 0;
+        box-shadow:0 -10px 25px rgba(0,0,0,.08);
+
+        display:flex;
+        align-items:center;
+        justify-content:space-around;
+
+        padding-bottom:env(safe-area-inset-bottom);
+      }
+
+      .bn-item{
+        flex:1;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        transition:.18s;
+        user-select:none;
+      }
+
+      .bn-item.pressed{
+        transform:scale(.93);
+      }
+
+      .bn-icon{
+        font-size:22px;
+        color:#9CA3AF;
+        transition:.2s;
+      }
+
+      .bn-title{
+        font-size:11px;
+        margin-top:4px;
+        color:#9CA3AF;
+        font-weight:600;
+      }
+
+      .bn-active .bn-icon{
+        color:#2563EB;
+      }
+
+      .bn-active .bn-title{
+        color:#2563EB;
+      }
+        .bn-fab{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  background:#2563EB;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-top:-35px;
+  box-shadow:0 10px 25px rgba(37,99,235,.35);
+}
+
+.bn-fab .bn-icon{
+  color:#fff !important;
+  font-size:30px;
+}
+
+.bn-fab-title{
+  height:12px;
+}
+
+      .bn-dot{
+        width:6px;
+        height:6px;
+        border-radius:50%;
+        background:#2563EB;
+        margin-bottom:4px;
+      }
+      `}</style>
+    {showMenu && (
+  <div
+    style={{
+      position: "fixed",
+      bottom: "90px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "260px",
+      background: "#fff",
+      borderRadius: "18px",
+      boxShadow: "0 15px 40px rgba(0,0,0,.18)",
+      overflow: "hidden",
+      zIndex: 99999,
+    }}
+  >
+    <div
+      onClick={() => {
+        setShowMenu(false);
+        setShowAddCustomer(true);
+      }}
+      style={{
+        padding: "16px",
+        cursor: "pointer",
+        borderBottom: "1px solid #eee",
+        fontWeight: 600,
+      }}
+    >
+      👤 Add Customer
+    </div>
+
+  </div>
+)}
+<AddCustomerModal
+  open={showAddCustomer}
+  onClose={() => setShowAddCustomer(false)}
+  onSuccess={() => {
+    onCustomerAdded?.();
+  }}
+/>
+
+<div className="bn-root">
+  <div className="bn-wrapper">
+
+          {items.map((item)=>{
+
+            const active =
+  item.path !== "#" &&
+  location.pathname === item.path;
+
+            return(
+              <div
+  key={item.key}
+               className={`
+  bn-item
+  ${item.fab ? "bn-fab" : ""}
+  ${active ? "bn-active" : ""}
+  ${pressed === item.key ? "pressed" : ""}
+`}
+
+                onClick={() => {
+  if (item.fab) {
+    setShowMenu(!showMenu);
+    return;
+  }
+
+  setShowMenu(false);
+  navigate(item.path);
+}}
+
+                onMouseDown={()=>setPressed(item.key)}
+                onMouseUp={()=>setPressed(null)}
+                onMouseLeave={()=>setPressed(null)}
+
+                onTouchStart={()=>setPressed(item.key)}
+                onTouchEnd={()=>setPressed(null)}
+              >
+
+                {active && <div className="bn-dot"></div>}
+
+                <div className="bn-icon">
+                  {item.icon}
+                </div>
+
+                {!item.fab && (
+  <div className="bn-title">
+    {item.title}
+  </div>
+)}
+
+              </div>
+            );
+
+          })}
+
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default BottomNavigation;

@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(shopId) {
+      return isSignedIn() && request.auth.uid == shopId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+    // Admin collection-group access for all DPS applications
+match /{path=**}/savings/{dpsId} {
+  allow read: if isAdmin();
+}
+
+    match /shops/{shopId} {
+      allow read: if isOwner(shopId) || isAdmin();
+      allow write: if isOwner(shopId);
+
+      match /customers/{customerId} {
+        allow read, write: if isOwner(shopId) || isAdmin();
+
+        match /transactions/{txnId} {
+          allow read, write: if isOwner(shopId) || isAdmin();
+        }
+      }
+
+      match /notifications/{notifId} {
+        allow read, write: if isOwner(shopId) || isAdmin();
+      }
+
+      match /staff/{staffId} {
+        allow read, write: if isOwner(shopId);
+      }
+
+      match /settings/{settingId} {
+        allow read, write: if isOwner(shopId);
+      }
+
+      match /activityLog/{logId} {
+        allow read: if isOwner(shopId) || isAdmin();
+        allow create: if isOwner(shopId);
+        allow update, delete: if false;
+      }
+
+      match /savings/{dpsId} {
+        allow read: if isOwner(shopId) || isAdmin();
+
+        allow create: if isOwner(shopId)
+          && request.resource.data.shopId == shopId
+          && request.resource.data.status == "pending_admin_approval"
+          && request.resource.data.review.status == "pending"
+          && request.resource.data.payment.paidInstallments == 0
+          && request.resource.data.payment.totalPaid == 0
+          && request.resource.data.autoDebit.status == "pending_provider_setup";
+
+        allow delete: if isOwner(shopId)
+          && resource.data.status == "pending_admin_approval";
+
+        allow update: if false;
+
+        match /installments/{installmentId} {
+          allow read: if isOwner(shopId) || isAdmin();
+          allow write: if false;
+        }
+      }
+
+      match /dpsNotifications/{notifId} {
+        allow read: if isOwner(shopId) || isAdmin();
+        allow write: if false;
+      }
+
+      match /dpsAuditLog/{logId} {
+        allow read: if isOwner(shopId) || isAdmin();
+        allow write: if false;
+      }
+    }
+
+    match /reports/{reportId} {
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.status == "pending";
+
+      allow read: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid || isAdmin());
+
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /notifications/{notifId} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.senderId == request.auth.uid;
+
+      allow update, delete: if false;
+    }
+  }
+}
