@@ -15,17 +15,9 @@ import ChangePassword from "./pages/ChangePassword";
 import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Loen from "./pages/Loen";
-import DPS from "./pages/DPS";
-import DPSCreate from "./pages/DPSCreate";
-import DPSDetails from "./pages/DPSDetails";
 import ReportDetails from "./pages/ReportDetails";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
-import AdminRoute from "./routes/AdminRoute";
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminDPS from "./pages/admin/AdminDPS";
-import AdminDPSDetails from "./pages/admin/AdminDPSDetails";
 
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -113,59 +105,6 @@ function App() {
           <Route
             path="/loen"
             element={<Loen />}
-          />
-
-          {/* Savings / DPS (shop owner side — login protected) */}
-          <Route
-            path="/dps"
-            element={
-              <ProtectedRoute>
-                <DPS />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dps/create"
-            element={
-              <ProtectedRoute>
-                <DPSCreate />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dps/:id"
-            element={
-              <ProtectedRoute>
-                <DPSDetails />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Admin Panel */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/dps"
-            element={
-              <AdminRoute>
-                <AdminDPS />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/dps/:shopId/:id"
-            element={
-              <AdminRoute>
-                <AdminDPSDetails />
-              </AdminRoute>
-            }
           />
 
           {/* Staff Management */}

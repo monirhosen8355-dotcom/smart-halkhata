@@ -19,7 +19,6 @@ import AvatarPicker from "../components/AvatarPicker";
 import overviewIcon from "../assets/icons/overview.svg";
 import staffIcon from "../assets/icons/staff.svg";
 import reportsIcon from "../assets/icons/reports.svg";
-import savingsIcon from "../assets/icons/savings.svg";
 import customersIcon from "../assets/icons/customers.svg";
 import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
@@ -111,13 +110,6 @@ const getNavCards = (t) => [
   title: t("shopProfile"), 
   icon: shopIcon, 
   path: "/shop-profile", 
-},
-
-{
-  key: "savings",
-  title: "Savings",
-  icon: savingsIcon,
-  path: "/dps",
 },
 
 {

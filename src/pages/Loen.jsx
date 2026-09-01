@@ -87,28 +87,28 @@ function Loen() {
         </h2>
 
         {/* Loan Condition */}
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "18px 16px",
-            borderRadius: "16px",
-            background: "rgba(255,255,255,0.14)",
-            border: "1px solid rgba(255,255,255,0.22)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "18px",
-              fontWeight: "700",
-              lineHeight: "1.8",
-              color: "#fff",
-            }}
-          >
-            লোন পেতে আপনার ৬ মাস মেয়াদি
-            <br />
-            একটি DPS থাকতে হবে।
-          </div>
-        </div>
+       <div
+  style={{
+    marginTop: "24px",
+    padding: "18px 16px",
+    borderRadius: "16px",
+    background: "rgba(255,255,255,0.14)",
+    border: "1px solid rgba(255,255,255,0.22)",
+  }}
+>
+  <div
+    style={{
+      fontSize: "18px",
+      fontWeight: "700",
+      lineHeight: "1.8",
+      color: "#fff",
+    }}
+  >
+    বর্তমানে লোন সুবিধা
+    <br />
+    উপলব্ধ নয়।
+  </div>
+</div>
       </div>
     </div>
   );
