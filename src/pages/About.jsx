@@ -277,9 +277,24 @@ function About() {
         </div>
 
         <div className="ab-card">
-          <div className="ab-section-title">{c.aboutTitle}</div>
-          <div className="ab-body-text">{c.aboutBody}</div>
-        </div>
+  <div className="ab-section-title">{c.aboutTitle}</div>
+
+  <div className="ab-body-text">
+    {c.aboutBody}
+  </div>
+
+  <div
+    className="ab-body-text"
+    style={{
+      marginTop: "12px",
+      fontWeight: "700",
+    }}
+  >
+    Smart Halkhata শুধু দোকানের জন্য নয়—
+    <br />
+    ব্যক্তিগত ও ব্যবসায়িক, দুই ধরনের হিসাবের জন্যই ব্যবহার করতে পারবেন।
+  </div>
+</div>
 
         <div className="ab-card">
           <div className="ab-section-title">{c.howTitle}</div>
@@ -312,13 +327,13 @@ function About() {
         <div className="ab-card">
           <div className="ab-section-title">{c.supportTitle}</div>
           <div className="ab-support-grid">
-            <a className="ab-support-link" href="https://t.me/YOUR_TELEGRAM_HERE" target="_blank" rel="noreferrer">
+            <a className="ab-support-link" href="https://t.me/@bdtearning66" target="_blank" rel="noreferrer">
               📨 {c.telegram}
             </a>
-            <a className="ab-support-link" href="https://wa.me/YOUR_PHONE_HERE" target="_blank" rel="noreferrer">
+            <a className="ab-support-link" href="https://wa.me/01897889723" target="_blank" rel="noreferrer">
               💬 {c.whatsapp}
             </a>
-            <a className="ab-support-link" href="tel:YOUR_PHONE_HERE">
+            <a className="ab-support-link" href="tel:01897889723">
               📞 {c.phone}
             </a>
             <a className="ab-support-link" href="mailto:monirhossen978889@gmail.com">
@@ -327,8 +342,8 @@ function About() {
           </div>
         </div>
 
-        <div className="ab-card">
-          <div className="ab-section-title">{c.devTitle}</div>
+       <div className="ab-card" id="developer">
+  <div className="ab-section-title">{c.devTitle}</div>
           <div className="ab-dev-row">
             <div className="ab-dev-avatar">MH</div>
             <div>

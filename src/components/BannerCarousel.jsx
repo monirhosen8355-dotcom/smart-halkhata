@@ -1,34 +1,39 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const banners = [
   {
     id: 1,
-    emoji: "📒",
+    emoji: "💰",
     title: "Smart Halkhata",
-    text: "সহজে রাখুন আপনার দোকানের সম্পূর্ণ হিসাব",
+    text: "Smart Halkhata-তে এখন লোন সুবিধাও পাওয়া যাচ্ছে। লোন পেতে চেক করুন।",
     button: "Explore",
+    path: "/loen",
     className: "banner-one",
   },
   {
     id: 2,
-    emoji: "💰",
+    emoji: "👥",
     title: "হিসাব রাখুন আরও সহজে",
-    text: "Customer, Due ও Payment — সবকিছু এক জায়গায়",
+    text: "আপনার সব Customer, Due ও Payment এক জায়গায় পরিচালনা করুন।",
     button: "Manage Customers",
+    path: "/customers",
     className: "banner-two",
   },
   {
     id: 3,
     emoji: "🚀",
     title: "Smart Business",
-    text: "আপনার ব্যবসার হিসাব হোক আরও দ্রুত ও স্মার্ট",
+    text: "Smart Halkhata সম্পর্কে আরও জানুন এবং আমাদের বিস্তারিত তথ্য দেখুন।",
     button: "Get Started",
+    path: "/about#developer",
     className: "banner-three",
   },
 ];
 
 function BannerCarousel() {
   const [active, setActive] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +44,10 @@ function BannerCarousel() {
   }, []);
 
   const banner = banners[active];
+
+  const handleBannerClick = () => {
+    navigate(banner.path);
+  };
 
   return (
     <div className="banner-carousel">
@@ -68,6 +77,7 @@ function BannerCarousel() {
           <button
             type="button"
             className="banner-button"
+            onClick={handleBannerClick}
           >
             {banner.button}
             <span>→</span>

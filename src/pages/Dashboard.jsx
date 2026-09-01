@@ -24,7 +24,9 @@ import shopIcon from "../assets/icons/shop.svg";
 import settingsIcon from "../assets/icons/settings.svg";
 import notificationIcon from "../assets/icons/notification.svg";
 import supportIcon from "../assets/icons/support.svg";
+import calculatorIcon from "../assets/icons/calculator.svg";import logoutIcon from "../assets/icons/logout.svg";import savingsIcon from "../assets/icons/savings.svg";
 import avatar1 from "../assets/avatars/avatar1.png";
+
 const loenIcon =
   "data:image/svg+xml;charset=UTF-8," +
   encodeURIComponent(`
@@ -119,6 +121,20 @@ const getNavCards = (t) => [
   path: "/loen",
 },
 
+{
+  key: "savings",
+  title: "Savings",
+  icon: savingsIcon,
+  path: "/savings",
+},
+
+{
+  key: "calculator",
+  title: "Calculator",
+  icon: calculatorIcon,
+  path: "/calculator",
+},
+
 { 
   key: "business-overview", 
   title: t("overview"), 
@@ -149,6 +165,32 @@ const [showBalance, setShowBalance] = useState(false);
 const [showProfile, setShowProfile] = useState(false);
 const [showAvatars, setShowAvatars] = useState(false);
 
+const [showLoginPopup, setShowLoginPopup] = useState(false);
+const [popupPage, setPopupPage] = useState(0);
+
+const loginPopupPages = [
+  {
+    title: "স্মার্ট হালখাতায় স্বাগতম",
+    text: "আপনার দৈনন্দিন হিসাব আরও সহজ ও সুন্দরভাবে পরিচালনা করুন।",
+  },
+  {
+    title: "আপনার হিসাব, আপনার নিয়ন্ত্রণ",
+    text: "পাওনা, পরিশোধ ও লেনদেনের হিসাব সহজেই সংরক্ষণ করুন।",
+  },
+  {
+    title: "নতুন সুবিধা আসছে",
+    text: "স্মার্ট হালখাতাকে আরও উন্নত করতে আমরা নিয়মিত নতুন সুবিধা যোগ করছি।",
+  },
+];
+
+useEffect(() => {
+  const alreadyShown = sessionStorage.getItem("loginPopupShown");
+
+  if (!alreadyShown) {
+    setShowLoginPopup(true);
+    sessionStorage.setItem("loginPopupShown", "true");
+  }
+}, []);
 const drawerStyle = {
   position: "fixed",
   top: 0,
@@ -232,6 +274,172 @@ setShopLogo(shopSnap.data().logoUrl || "");
 
   return (
     <div className="hd-root">
+
+      {showLoginPopup && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.55)",
+      backdropFilter: "blur(4px)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      zIndex: 999999,
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "440px",
+        background: "var(--card)",
+        color: "var(--text)",
+        borderRadius: "20px",
+        padding: "30px 26px 22px",
+        boxShadow: "0 18px 50px rgba(0,0,0,0.25)",
+        position: "relative",
+        textAlign: "center",
+      }}
+    >
+      {/* Close Button */}
+      <button
+        type="button"
+        onClick={() => setShowLoginPopup(false)}
+        aria-label="Close"
+        style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          width: "34px",
+          height: "34px",
+          border: "none",
+          borderRadius: "50%",
+          background: "var(--bg)",
+          color: "var(--text)",
+          fontSize: "22px",
+          fontWeight: "700",
+          lineHeight: "1",
+          cursor: "pointer",
+        }}
+      >
+        ×
+      </button>
+
+      {/* Icon */}
+      {/* Title */}
+      <h2
+  style={{
+    margin: "0 0 16px",
+    fontSize: "21px",
+    fontWeight: "800",
+    lineHeight: "1.5",
+  }}
+>
+  স্মার্ট হালখাতায় স্বাগতম
+</h2>
+
+<p
+  style={{
+    margin: 0,
+    fontSize: "15px",
+    lineHeight: "1.9",
+    fontWeight: "600",
+    opacity: 0.85,
+  }}
+>
+  এটি একটি ব্যক্তিগত ও ব্যবসায়িক
+  <br />
+  হিসাব-নিকাশের অ্যাপস।
+</p>
+
+<div
+  style={{
+    marginTop: "18px",
+    padding: "14px 16px",
+    borderRadius: "12px",
+    background: "var(--bg)",
+    border: "1px solid var(--border, #E5E7EB)",
+    textAlign: "left",
+  }}
+>
+  <div
+    style={{
+      fontSize: "14px",
+      fontWeight: "800",
+      marginBottom: "7px",
+    }}
+  >
+    📌 বর্তমানে যা জানা প্রয়োজন
+  </div>
+
+  <div
+    style={{
+      fontSize: "13px",
+      lineHeight: "1.8",
+      opacity: 0.8,
+    }}
+  >
+    • আপনার ব্যক্তিগত ও ব্যবসায়িক পাওনা-দেনার হিসাব সহজেই সংরক্ষণ করতে পারবেন।
+    <br />
+    • Customer-এর লেনদেন, পাওনা ও পরিশোধের হিসাব এক জায়গায় রাখতে পারবেন।
+    <br />
+    • Savings সিস্টেমটি বর্তমানে মেইনটেন্যান্সের কাজের মধ্যে রয়েছে।
+    <br />
+    • নতুন সুবিধাগুলো ধীরে ধীরে যুক্ত করা হবে।
+  </div>
+</div>
+
+      {/* Bottom Buttons */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "10px",
+          marginTop: "26px",
+          paddingTop: "18px",
+          borderTop: "1px solid var(--border, #E5E7EB)",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setShowLoginPopup(false)}
+          style={{
+            minWidth: "110px",
+            padding: "11px 20px",
+            border: "1px solid var(--border, #E5E7EB)",
+            borderRadius: "10px",
+            background: "transparent",
+            color: "var(--text)",
+            fontSize: "14px",
+            fontWeight: "700",
+            cursor: "pointer",
+          }}
+        >
+          বন্ধ করুন
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowLoginPopup(false)}
+          style={{
+            minWidth: "110px",
+            padding: "11px 20px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#2563EB",
+            color: "#fff",
+            fontSize: "14px",
+            fontWeight: "800",
+            cursor: "pointer",
+          }}
+        >
+          ঠিক আছে
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       <style>{`
         * { box-sizing: border-box; }
         .hd-root {
@@ -457,7 +665,9 @@ overflow: hidden;
         }
         @media (min-width: 640px) { .hd-tile-title { font-size: 13.5px; } }
 
-        .hd-tile.logout .hd-tile-icon { background: #FEF2F2; }
+        .hd-tile.logout .hd-tile-icon {
+  background: transparent;
+}
         .hd-tile.logout .hd-tile-title { color: #DC2626; }
         @keyframes balanceFloat{
   0%{
@@ -727,8 +937,16 @@ animation:"balanceFloat 4s ease-in-out infinite",
     onMouseLeave={() => setPressedKey(null)}
   >
     <div className="hd-tile-icon">
-      <IoPower size={48} color="#EF4444" />
-    </div>
+  <img
+    src={logoutIcon}
+    alt="Logout"
+    style={{
+      width: "48px",
+      height: "48px",
+      objectFit: "contain",
+    }}
+  />
+</div>
 
     <div className="hd-tile-title">{t("logout")}</div>
   </div>

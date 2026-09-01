@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Loen() {
+  const navigate = useNavigate();
+
   return (
     <div
       style={{
@@ -36,7 +39,6 @@ function Loen() {
             viewBox="0 0 100 100"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Person head */}
             <circle
               cx="43"
               cy="29"
@@ -46,7 +48,6 @@ function Loen() {
               strokeWidth="5"
             />
 
-            {/* Person body */}
             <path
               d="M15 82C15 62 26 50 43 50C55 50 64 56 69 67"
               fill="none"
@@ -55,13 +56,11 @@ function Loen() {
               strokeLinecap="round"
             />
 
-            {/* Shield */}
             <path
               d="M67 48L87 58V72C87 84 77 91 67 95C57 91 47 84 47 72V58L67 48Z"
               fill="#EC4899"
             />
 
-            {/* X */}
             <path
               d="M60 64L74 78M74 64L60 78"
               stroke="#fff"
@@ -71,7 +70,6 @@ function Loen() {
           </svg>
         </div>
 
-        {/* Thank You Text */}
         <h2
           style={{
             margin: "0",
@@ -86,8 +84,7 @@ function Loen() {
           ধন্যবাদ
         </h2>
 
-        {/* Loan Condition */}
-       <div
+        <div
   style={{
     marginTop: "24px",
     padding: "18px 16px",
@@ -108,10 +105,43 @@ function Loen() {
     <br />
     উপলব্ধ নয়।
   </div>
+
+  <div
+    style={{
+      marginTop: "12px",
+      fontSize: "14px",
+      fontWeight: "600",
+      lineHeight: "1.8",
+      color: "#fff",
+      opacity: 0.9,
+    }}
+  >
+    লোন সেবা পেতে আপনার কমপক্ষে ৩ মাস মেয়াদি একটি DPS থাকতে হবে।
+    লোন সেবা সম্পর্কে বিস্তারিত জানতে আমাদের সাথে যোগাযোগ করুন।
+  </div>
 </div>
+
+        {/* Dashboard Button */}
+        <button
+          onClick={() => navigate("/dashboard")}
+          style={{
+            marginTop: "22px",
+            padding: "13px 28px",
+            border: "none",
+            borderRadius: "12px",
+            background: "#fff",
+            color: "#2563EB",
+            fontSize: "16px",
+            fontWeight: "800",
+            cursor: "pointer",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+          }}
+        >
+          ড্যাশবোর্ডে ফিরে যান
+        </button>
       </div>
     </div>
   );
 }
 
-export default Loen;
+export default Loen;  

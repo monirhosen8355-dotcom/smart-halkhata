@@ -15,7 +15,8 @@ import ChangePassword from "./pages/ChangePassword";
 import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Loen from "./pages/Loen";
-import ReportDetails from "./pages/ReportDetails";
+import Savings from "./pages/Savings";
+import Calculator from "./pages/Calculator";import ReportDetails from "./pages/ReportDetails";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -106,6 +107,13 @@ function App() {
             path="/loen"
             element={<Loen />}
           />
+
+          {/* Savings */}
+<Route
+  path="/savings"
+  element={<Savings />}
+/>
+<Route path="/calculator" element={<Calculator />} />
 
           {/* Staff Management */}
           <Route

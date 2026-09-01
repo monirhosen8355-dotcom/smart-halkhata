@@ -25,6 +25,7 @@ function AuthProvider({ children }) {
 
   // Logout
   const logout = () => {
+    sessionStorage.removeItem("loginPopupShown");
     return signOut(auth);
   };
 
