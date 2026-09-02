@@ -11,6 +11,11 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == shopId;
     }
 
+    function isVerificationOwner() {
+      return isSignedIn()
+        && request.auth.token.email == "monirhossen978889@gmail.com";
+    }
+
     match /shops/{shopId} {
       allow read: if isOwner(shopId);
       allow write: if isOwner(shopId);
@@ -40,6 +45,45 @@ service cloud.firestore {
         allow create: if isOwner(shopId);
         allow update, delete: if false;
       }
+
+      // Personal Savings
+      match /savings/{savingsId} {
+
+        // User can create only a pending payment.
+        allow create: if isOwner(shopId)
+          && request.resource.data.status == "pending"
+          && request.resource.data.payment.status == "pending";
+
+        // User can read own savings.
+        // Verification owner can read savings for payment verification.
+        allow read: if isOwner(shopId) || isVerificationOwner();
+
+        // Only verification owner can confirm/reject.
+        allow update: if isVerificationOwner()
+          && resource.data.status == "pending"
+          && request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasOnly(["status", "payment", "updatedAt"])
+          && (
+            (
+              request.resource.data.status == "active"
+              && request.resource.data.payment.status == "confirmed"
+            )
+            ||
+            (
+              request.resource.data.status == "rejected"
+              && request.resource.data.payment.status == "rejected"
+            )
+          );
+
+        allow delete: if false;
+      }
+    }
+
+    // Allows the verification owner to query
+    // savings collections across all shops.
+    match /{path=**}/savings/{savingsId} {
+      allow read: if isVerificationOwner();
     }
 
     match /reports/{reportId} {

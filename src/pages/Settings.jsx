@@ -3,8 +3,11 @@ import { AuthContext } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import BottomNavigation from "../components/BottomNavigation";
+import {
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";import BottomNavigation from "../components/BottomNavigation";
 
 function Settings() {
   const { user, loading, logout } = useContext(AuthContext);
@@ -19,19 +22,28 @@ function Settings() {
 
   const [savingField, setSavingField] = useState(null); // "shopName" | "darkMode" | "language" | null
 
-  useEffect(() => {
+    useEffect(() => {
     if (user) loadAll();
   }, [user]);
 
   const loadAll = async () => {
     const shopRef = doc(db, "shops", user.uid);
     const shopSnap = await getDoc(shopRef);
+
     if (shopSnap.exists()) {
       setShopName(shopSnap.data().shopName || "");
     }
 
-    const prefsRef = doc(db, "shops", user.uid, "settings", "preferences");
+    const prefsRef = doc(
+      db,
+      "shops",
+      user.uid,
+      "settings",
+      "preferences"
+    );
+
     const prefsSnap = await getDoc(prefsRef);
+
     if (prefsSnap.exists()) {
       const data = prefsSnap.data();
       setDarkMode(data.darkMode ?? false);
@@ -227,7 +239,6 @@ function Settings() {
             </div>
           </div>
         </div>
-
         <div className="se-card se-version-card">
           <div className="se-version-brand">Smart Halkhata</div>
           <div className="se-version-number">Version 1.0.0</div>

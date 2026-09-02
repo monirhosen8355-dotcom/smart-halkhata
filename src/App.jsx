@@ -12,12 +12,13 @@ import HelpSupport from "./pages/HelpSupport";
 import Settings from "./pages/Settings";
 import BusinessOverview from "./pages/BusinessOverview";
 import ChangePassword from "./pages/ChangePassword";
-import About from "./pages/About";
+import SavingsPaymentVerification from "./pages/SavingsPaymentVerification";import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Loen from "./pages/Loen";
 import Savings from "./pages/Savings";
-import Calculator from "./pages/Calculator";import ReportDetails from "./pages/ReportDetails";
-
+import Calculator from "./pages/Calculator";
+import ReportDetails from "./pages/ReportDetails";
+import PageLoader from "./components/PageLoader";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import { useContext, useEffect } from "react";
@@ -54,9 +55,10 @@ function App() {
     loadTheme();
   }, [user]);
 
-  return (
-    <BrowserRouter>
-      <LanguageProvider>
+ return ( 
+  <BrowserRouter> 
+    <PageLoader />
+    <LanguageProvider>
         <Routes>
 
           {/* Login */}
@@ -121,10 +123,16 @@ function App() {
             element={<StaffManagement />}
           />
 
-          {/* Change Password */}
-          <Route
-            path="/change-password"
-            element={<ChangePassword />}
+          {/* Change Password */} 
+          <Route 
+            path="/change-password" 
+            element={<ChangePassword />} 
+          />
+
+          {/* Savings Payment Verification */}
+          <Route 
+            path="/savings-payment-verification" 
+            element={<SavingsPaymentVerification />} 
           />
 
           {/* About */}
